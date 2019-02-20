@@ -1,4 +1,5 @@
-const FIXED_TASKS_AMOUNT = 7;
+'use strict';
+const TASKS_AMOUNT_INITIAL = 7;
 
 const Filters = [
   [`All`, 15], [`Overdue`, 0], [`Today`, 0], [`Favorites`, 7],
@@ -25,26 +26,20 @@ const TaskCards = [
 ];
 
 const getRandomInt = (min, max) => Math.floor(Math.random() * (max + 1 - min)) + min;
-
-const tasksAmountRandom = getRandomInt(1, 10);
 const getRandomElement = (array) => array[getRandomInt(0, array.length - 1)];
 
-const getFilterElement = (caption, amount=0, isChecked=false) => {
-   return `
+const getFilterElement = (caption, amount = 0, isChecked = false) => {
+  return `
    <input
    type="radio" id="filter__${caption.toLowerCase()}" class="filter__input visually-hidden"
-   name="filter" ${isChecked ? " checked" : ""}>
+   name="filter" ${isChecked ? ` checked` : ``}>
    <label for="filter__${caption.toLowerCase()}" class="filter__label">
    ${caption.toUpperCase()} <span class="filter__${caption.toLowerCase()}-count">${amount}
    </span></label>
    `;
 };
 
-const filterContainer = document.querySelector('.main__filter');
-Filters.forEach(([first, second]) => filterContainer.insertAdjacentHTML('beforeEnd', getFilterElement(first, second)));
-
-
-const getTaskCard = (color='black', text) => {
+const getTaskCard = (color = `black`, text) => {
   return `
   <article
   class="card card--${color}" card--repeat>
@@ -90,7 +85,6 @@ const getTaskCard = (color='black', text) => {
   name="time"></label></fieldset>
   <button class="card__repeat-toggle" type="button">
   repeat:<span class="card__repeat-status">no</span></button>
-
   <fieldset class="card__repeat-days" disabled>
   <div class="card__repeat-days-inner">
   <input
@@ -122,7 +116,7 @@ const getTaskCard = (color='black', text) => {
   name="repeat"
   value="th">
   <label class="card__repeat-day" for="repeat-th-5">th</label>
-  <input 
+  <input
   class="visually-hidden card__repeat-day-input"
   type="checkbox"
   id="repeat-fr-5"
@@ -258,23 +252,32 @@ const getTaskCard = (color='black', text) => {
   </div>
   </form>
   </article>
-  `
+  `;
 };
 
-const boardTasksContainer = document.querySelector('.board__tasks');
+const filterContainer = document.querySelector(`.main__filter`);
+Filters.forEach(([first, second]) =>
+  filterContainer.insertAdjacentHTML(`beforeEnd`, getFilterElement(first, second)));
 
-for (let i = 1; i <= FIXED_TASKS_AMOUNT; i++) {
-  const randomCard = getRandomElement(TaskCards);
-  boardTasksContainer.insertAdjacentHTML('afterBegin', getTaskCard(randomCard.color, randomCard.text));
-}
+const boardTasksContainer = document.querySelector(`.board__tasks`);
 
-filterContainer.addEventListener('click', (evt) => {
-  //const element = evt.target;
-  //element.checked = `true`;
-  console.log(`event`);
-  console.log(filterContainer);
+const insertTaskCards = (amount) => {
+
+  for (let i = 0; i < amount; i++) {
+    const randomCard = getRandomElement(TaskCards);
+    boardTasksContainer.insertAdjacentHTML(`beforeEnd`,
+        getTaskCard(randomCard.color, randomCard.text));
+  }
+
+};
+
+insertTaskCards(TASKS_AMOUNT_INITIAL);
+
+filterContainer.addEventListener(`click`, () => {
+
   while (boardTasksContainer.firstChild) {
     boardTasksContainer.removeChild(boardTasksContainer.firstChild);
   }
-  
- });
+
+  insertTaskCards(getRandomInt(1, 10));
+});
