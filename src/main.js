@@ -1,5 +1,6 @@
 import makeFilterElement from './make_filter';
 import makeTaskCard from './make_task';
+import {getRandomInt, getRandomElement} from './utils';
 
 const TASKS_AMOUNT_INITIAL = 7;
 
@@ -26,9 +27,6 @@ const TaskCards = [
     text: `It is example of repeating task`
   }
 ];
-
-const getRandomInt = (min, max) => Math.floor(Math.random() * (max + 1 - min)) + min;
-const getRandomElement = (array) => array[getRandomInt(0, array.length - 1)];
 
 const filterContainer = document.querySelector(`.main__filter`);
 Filters.forEach(([first, second]) =>
