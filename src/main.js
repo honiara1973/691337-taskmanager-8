@@ -1,5 +1,5 @@
-import makeFilterElement from './make_filter';
-import makeTaskCard from './make_task';
+import makeFilterElement from './make-filter';
+import makeTaskCard from './make-task';
 import {getRandomInt, getRandomElement} from './utils';
 
 const TASKS_AMOUNT_INITIAL = 7;

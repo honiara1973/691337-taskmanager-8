@@ -4,7 +4,7 @@ const MS_IN_WEEK = 7 * 24 * 60 * 60 * 1000;
 const Titles = [`Изучить теорию`, `Сделать домашку`, `Пройти интенсив на соточку`];
 const HashTags = [`homework`, `theory`, `practice`, `intensive`, `keks`, `sport`,
   `entertainment`, `shopping`, `repeat`, `cinema`];
-
+const Colors = [`black`, `yellow`, `blue`, `green`, `pink`];
 
 const task = {
 
@@ -27,5 +27,24 @@ const task = {
 
   picture: `//picsum.photos/100/100?r=${Math.random()}`,
 
+  get color() {
+    return getRandomElement(Colors);
+  },
+
+  repeatingDays: {
+    'mo': true,
+    'tu': false,
+    'we': true,
+    'th': false,
+    'fr': false,
+    'sa': true,
+    'su': false,
+  },
+
+  isFavorite: false,
+
+  isDone: false,
 
 };
+
+export default task;
