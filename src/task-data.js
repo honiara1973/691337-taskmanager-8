@@ -1,31 +1,24 @@
 import {getRandomInt, getRandomElement} from './utils';
 
 const MS_IN_WEEK = 7 * 24 * 60 * 60 * 1000;
-const Titles = [`Изучить теорию`, `Сделать домашку`, `Пройти интенсив на соточку`];
-const HashTags = [`homework`, `theory`, `practice`, `intensive`, `keks`, `sport`,
-  `entertainment`, `shopping`, `repeat`, `cinema`];
 const Colors = [`black`, `yellow`, `blue`, `green`, `pink`];
 
 const task = {
 
   get title() {
-    return getRandomElement(Titles);
+    return getRandomElement([`Изучить теорию`, `Сделать домашку`, `Пройти интенсив на соточку`]);
   },
 
   get dueDate() {
     return new Date(getRandomInt(Date.now() - MS_IN_WEEK, Date.now() + MS_IN_WEEK));
   },
 
-  get tags() {
-    const hashTagsAmount = getRandomInt(0, 3);
-    const tagsSet = new Set();
-    for (let i = 0; i < hashTagsAmount; i++) {
-      tagsSet.add(getRandomElement(HashTags));
-    }
-    return tagsSet;
-  },
+  tags: new Set([`homework`, `theory`, `practice`, `intensive`, `keks`, `sport`,
+    `entertainment`, `shopping`, `repeat`, `cinema`]),
 
-  picture: `//picsum.photos/100/100?r=${Math.random()}`,
+  picture: `http://picsum.photos/100/100?r=${Math.random()}`,
+
+  colors: Colors,
 
   get color() {
     return getRandomElement(Colors);
@@ -48,3 +41,4 @@ const task = {
 };
 
 export default task;
+

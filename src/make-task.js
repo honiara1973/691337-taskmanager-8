@@ -1,9 +1,9 @@
-import task from './task-data';
+import {compareRandom, getRandomInt} from './utils';
 
-export default () => {
+export default (task) => {
   return `
       <article
-      class="card card--edit card--${task.color}" card--repeat>
+      class="card card--${task.color}" card--repeat>
       <form class="card__form" method="get">
       <div class="card__inner">
       <div class="card__control">
@@ -39,13 +39,13 @@ export default () => {
       type="text"
       placeholder="23 September"
       name="date"
-      value="${task.dueDate}"></label>
+      value="${`${task.dueDate}`.substr(4, 6)}"></label>
       <label class="card__input-deadline-wrap">
       <input class="card__time"
       type="text"
       placeholder="11:15 PM"
       name="time"
-      value="20:00">
+      value="${`${task.dueDate}`.substr(16, 5)}">
       </label></fieldset>
 
       <button class="card__repeat-toggle" type="button">
@@ -72,6 +72,9 @@ export default () => {
       <div class="card__hashtag">
       <div class="card__hashtag-list">
       ${[...task.tags]
+        .slice()
+        .sort(compareRandom)
+        .slice(0, getRandomInt(0, 3))
         .map((it) => `
         <span class="card__hashtag-inner">
         <input
@@ -101,7 +104,7 @@ export default () => {
       class="card__img-input visually-hidden"
       name="img">
       <img
-      src="img/add-photo.svg"
+      src="${task.picture}"
       alt="task picture"
       class="card__img">
       </label>
@@ -109,56 +112,21 @@ export default () => {
       <h3 class="card__colors-title">Color</h3>
       <div class="card__colors-wrap">
 
-      <input
+      ${task.colors
+      .map((it) =>
+        `<input
       type="radio"
-      id="color-black-5"
-      class="card__color-input card__color-input--black visually-hidden"
+      id="color-${it}-5"
+      class="card__color-input card__color-input--${it} visually-hidden"
       name="color"
-      value="black">
+      value="${it}"
+      ${it === task.color ? `checked` : ``}>
       <label
-      for="color-black-5"
-      class="card__color card__color--black">black</label>
-
-      <input
-      type="radio"
-      id="color-yellow-5"
-      class="card__color-input card__color-input--yellow visually-hidden"
-      name="color"
-      value="yellow">
-      <label
-      for="color-yellow-5"
-      class="card__color card__color--yellow">yellow</label>
-
-      <input
-      type="radio"
-      id="color-blue-5"
-      class="card__color-input card__color-input--blue visually-hidden"
-      name="color"
-      value="blue">
-      <label
-      for="color-blue-5"
-      class="card__color card__color--blue">blue</label>
-
-      <input
-      type="radio"
-      id="color-green-5"
-      class="card__color-input card__color-input--green visually-hidden"
-      name="color"
-      value="green"
-      checked>
-      <label
-      for="color-green-5"
-      class="card__color card__color--green">green</label>
-
-      <input
-      type="radio"
-      id="color-pink-5"
-      class="card__color-input card__color-input--pink visually-hidden"
-      name="color"
-      value="pink">
-      <label
-      for="color-pink-5"
-      class="card__color card__color--pink">pink</label>
+      for="color-${it}-5"
+      class="card__color card__color--${it}">${it}</label>`
+      )
+    .join(``)}
+      
       </div>
       </div>
       </div>
@@ -171,4 +139,3 @@ export default () => {
       </article>
       `;
 };
-

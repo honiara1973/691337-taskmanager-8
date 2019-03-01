@@ -1,6 +1,8 @@
 import makeFilterElement from './make-filter';
+import task from './task-data';
 import makeTaskCard from './make-task';
-import {getRandomInt, getRandomElement} from './utils';
+
+import {getRandomInt} from './utils';
 
 const TASKS_AMOUNT_INITIAL = 7;
 
@@ -9,24 +11,15 @@ const Filters = [
   [`Repeating`, 2], [`Tags`, 6], [`Archive`, 115]
 ];
 
-const TaskCards = [
-  {
-    color: `black`,
-    text: `This is example of new task, you can add picture, set date and time, add tags.`
-  },
-  {
-    color: `blue`,
-    text: ``
-  },
-  {
-    color: `yellow`,
-    text: `Here is a card with filled data`
-  },
-  {
-    color: `pink`,
-    text: `It is example of repeating task`
+const createTaskCards = (amount) => {
+  const taskCards = [];
+
+  for (let i = 0; i < amount; i++) {
+    taskCards.push(makeTaskCard(task));
   }
-];
+
+  return taskCards;
+};
 
 const filterContainer = document.querySelector(`.main__filter`);
 Filters.forEach(([first, second]) =>
@@ -35,13 +28,8 @@ Filters.forEach(([first, second]) =>
 const boardTasksContainer = document.querySelector(`.board__tasks`);
 
 const insertTaskCards = (amount) => {
-
-  for (let i = 0; i < amount; i++) {
-    const randomCard = getRandomElement(TaskCards);
-    boardTasksContainer.insertAdjacentHTML(`beforeEnd`,
-        makeTaskCard(randomCard.color, randomCard.text));
-  }
-
+  const taskCards = createTaskCards(amount);
+  taskCards.map((it) => boardTasksContainer.insertAdjacentHTML(`beforeEnd`, it));
 };
 
 insertTaskCards(TASKS_AMOUNT_INITIAL);
