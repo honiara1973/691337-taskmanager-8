@@ -1,5 +1,5 @@
 import makeFilterElement from './make-filter';
-import task from './task-data';
+import getTasks from './task-data';
 import makeTaskCard from './make-task';
 
 import {getRandomInt} from './utils';
@@ -11,14 +11,11 @@ const Filters = [
   [`Repeating`, 2], [`Tags`, 6], [`Archive`, 115]
 ];
 
-const createTaskCards = (amount) => {
-  const taskCards = [];
-
-  for (let i = 0; i < amount; i++) {
-    taskCards.push(makeTaskCard(task));
-  }
-
-  return taskCards;
+const insertTaskCards = (amount) => {
+  const taskCards = getTasks(amount);
+  return taskCards.forEach((it) =>
+    boardTasksContainer.insertAdjacentHTML(`beforeEnd`, makeTaskCard(it))
+  );
 };
 
 const filterContainer = document.querySelector(`.main__filter`);
@@ -26,11 +23,6 @@ Filters.forEach(([first, second]) =>
   filterContainer.insertAdjacentHTML(`beforeEnd`, makeFilterElement(first, second)));
 
 const boardTasksContainer = document.querySelector(`.board__tasks`);
-
-const insertTaskCards = (amount) => {
-  const taskCards = createTaskCards(amount);
-  taskCards.map((it) => boardTasksContainer.insertAdjacentHTML(`beforeEnd`, it));
-};
 
 insertTaskCards(TASKS_AMOUNT_INITIAL);
 
