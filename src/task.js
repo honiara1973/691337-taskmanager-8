@@ -1,15 +1,41 @@
-// import {compareRandom, getRandomInt} from './utils';
+import createTaskElement from './make-task';
+import {compareRandom, getRandomInt} from './utils';
 
-export default (template) => {
-  const newTask = document.createElement(`div`);
-  newTask.innerHTML = template;
-  return newTask.firstChild;
-};
 
-/* export default (task) => {
-  return `
+class Task {
+  constructor(data) {
+    this._title = data.title;
+    this._dueDate = data.dueDate;
+    this._tags = data.tags;
+    this._colors = data.colors;
+    this._color = data.color;
+    this._picture = data.picture;
+    this._repeatingDays = data.repeatingDays;
+    this._element = null;
+    this._onEdit = null;
+
+  }
+
+  _isRepeated() {
+    return Object.values(this._repeatingDays).some((it) => it === true);
+  }
+
+  _onEditButtonClick() {
+    typeof this._onEdit === `function` && this._onEdit();
+  }
+
+  set onEdit(fn) {
+    this._onEdit = fn;
+  }
+
+  get element() {
+    return this._element;
+  }
+
+  get template() {
+    return `
       <article
-      class="card card--${task.color}" card--repeat>
+      class="card card--${this._color} ${this._isRepeated() ? `card--repeat` : ``}">
       <form class="card__form" method="get">
       <div class="card__inner">
       <div class="card__control">
@@ -30,7 +56,7 @@ export default (template) => {
       <label>
       <textarea class="card__text"
       placeholder="Start typing your text here..."
-      name="text">${task.title}</textarea>
+      name="text">${this._title}</textarea>
       </label></div>
       <div class="card__settings">
       <div class="card__details">
@@ -45,13 +71,13 @@ export default (template) => {
       type="text"
       placeholder="23 September"
       name="date"
-      value="${`${task.dueDate}`.substr(4, 6)}"></label>
+      value="${`${this._dueDate}`.substr(4, 6)}"></label>
       <label class="card__input-deadline-wrap">
       <input class="card__time"
       type="text"
       placeholder="11:15 PM"
       name="time"
-      value="${`${task.dueDate}`.substr(16, 5)}">
+      value="${`${this._dueDate}`.substr(16, 5)}">
       </label></fieldset>
 
       <button class="card__repeat-toggle" type="button">
@@ -59,7 +85,7 @@ export default (template) => {
 
       <fieldset class="card__repeat-days">
       <div class="card__repeat-days-inner">
-      ${Object.entries(task.repeatingDays)
+      ${Object.entries(this._repeatingDays)
         .map(([key, value]) =>
           `<input
         class="visually-hidden card__repeat-day-input"
@@ -77,7 +103,7 @@ export default (template) => {
       </div>
       <div class="card__hashtag">
       <div class="card__hashtag-list">
-      ${[...task.tags]
+      ${[...this._tags]
         .slice()
         .sort(compareRandom)
         .slice(0, getRandomInt(0, 3))
@@ -110,7 +136,7 @@ export default (template) => {
       class="card__img-input visually-hidden"
       name="img">
       <img
-      src="${task.picture}"
+      src="${this._picture}"
       alt="task picture"
       class="card__img">
       </label>
@@ -118,7 +144,7 @@ export default (template) => {
       <h3 class="card__colors-title">Color</h3>
       <div class="card__colors-wrap">
 
-      ${task.colors
+      ${this._colors
       .map((it) =>
         `<input
       type="radio"
@@ -126,13 +152,13 @@ export default (template) => {
       class="card__color-input card__color-input--${it} visually-hidden"
       name="color"
       value="${it}"
-      ${it === task.color ? `checked` : ``}>
+      ${it === this._color ? `checked` : ``}>
       <label
       for="color-${it}-5"
       class="card__color card__color--${it}">${it}</label>`
       )
     .join(``)}
-
+      
       </div>
       </div>
       </div>
@@ -143,6 +169,30 @@ export default (template) => {
       </div>
       </form>
       </article>
-      `;
-};
-*/
+      `.trim();
+  }
+
+  render() {
+    this._element = createTaskElement(this.template);
+    this.bind();
+    return this._element;
+  }
+
+  unrender() {
+    this.unbind();
+    this._element = null;
+  }
+
+  bind() {
+    this._element.querySelector(`.card__btn--edit`).
+      addEventListener(`click`, this._onEditButtonClick.bind(this));
+  }
+
+  unbind() {
+    this._element.querySelector(`.card__btn--edit`).
+    removeEventListener(`click`, this._onEditButtonClick);
+  }
+
+}
+
+export default Task;
