@@ -1,7 +1,9 @@
-import {getRandomInt, getRandomElement} from './utils';
+import {getRandomInt, getRandomElement, compareRandom} from './utils';
 
 const MS_IN_WEEK = 7 * 24 * 60 * 60 * 1000;
 const Colors = [`black`, `yellow`, `blue`, `green`, `pink`];
+const Tags = [`homework`, `theory`, `practice`, `intensive`, `keks`, `sport`,
+  `entertainment`, `shopping`, `repeat`, `cinema`];
 
 const getTasks = (amount) => {
 
@@ -11,20 +13,23 @@ const getTasks = (amount) => {
     const task = {
       title: getRandomElement([`Изучить теорию`, `Сделать домашку`, `Пройти интенсив на соточку`]),
       dueDate: new Date(getRandomInt(Date.now() - MS_IN_WEEK, Date.now() + MS_IN_WEEK)),
-      tags: new Set([`homework`, `theory`, `practice`, `intensive`, `keks`, `sport`,
-        `entertainment`, `shopping`, `repeat`, `cinema`]),
+
+      tags: new Set([...Tags]
+      .slice()
+      .sort(compareRandom)
+      .slice(0, getRandomInt(0, 3))),
 
       picture: `http://picsum.photos/100/100?r=${Math.random()}`,
       colors: Colors,
       color: getRandomElement(Colors),
       repeatingDays: {
-        'mo': true,
-        'tu': false,
-        'we': true,
-        'th': false,
-        'fr': false,
-        'sa': true,
-        'su': false,
+        'mo': getRandomElement([true, false]),
+        'tu': getRandomElement([true, false]),
+        'we': getRandomElement([true, false]),
+        'th': getRandomElement([true, false]),
+        'fr': getRandomElement([true, false]),
+        'sa': getRandomElement([true, false]),
+        'su': getRandomElement([true, false]),
       },
 
       isFavorite: false,
@@ -38,4 +43,3 @@ const getTasks = (amount) => {
 };
 
 export default getTasks;
-

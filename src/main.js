@@ -1,6 +1,7 @@
 import makeFilterElement from './make-filter';
 import getTasks from './task-data';
-import makeTaskCard from './make-task';
+import Task from './task';
+import TaskEdit from './task-edit';
 
 import {getRandomInt} from './utils';
 
@@ -11,20 +12,38 @@ const Filters = [
   [`Repeating`, 2], [`Tags`, 6], [`Archive`, 115]
 ];
 
-const insertTaskCards = (amount) => {
-  const taskCards = getTasks(amount);
-  return taskCards.forEach((it) =>
-    boardTasksContainer.insertAdjacentHTML(`beforeEnd`, makeTaskCard(it))
-  );
-};
-
 const filterContainer = document.querySelector(`.main__filter`);
 Filters.forEach(([first, second]) =>
   filterContainer.insertAdjacentHTML(`beforeEnd`, makeFilterElement(first, second)));
 
 const boardTasksContainer = document.querySelector(`.board__tasks`);
 
-insertTaskCards(TASKS_AMOUNT_INITIAL);
+const renderTaskElement = (data) => {
+  const taskCard = new Task(data);
+  const taskCardEdit = new TaskEdit(data);
+
+  boardTasksContainer.appendChild(taskCard.render());
+
+  taskCard.onEdit = () => {
+    taskCardEdit.render();
+    boardTasksContainer.replaceChild(taskCardEdit.element, taskCard.element);
+    taskCard.unrender();
+  };
+
+  taskCardEdit.onSubmit = () => {
+    taskCard.render();
+    boardTasksContainer.replaceChild(taskCard.element, taskCardEdit.element);
+    taskCardEdit.unrender();
+  };
+};
+
+const getTaskCards = (amount) => {
+  const taskCards = getTasks(amount);
+  return taskCards.forEach((it) =>
+    renderTaskElement(it));
+};
+
+getTaskCards(TASKS_AMOUNT_INITIAL);
 
 filterContainer.addEventListener(`click`, () => {
 
@@ -32,5 +51,5 @@ filterContainer.addEventListener(`click`, () => {
     boardTasksContainer.removeChild(boardTasksContainer.firstChild);
   }
 
-  insertTaskCards(getRandomInt(1, 10));
+  getTaskCards(getRandomInt(1, 10));
 });
