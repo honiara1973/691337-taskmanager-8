@@ -1,19 +1,15 @@
-import createTaskElement from './make-task';
-import {compareRandom, getRandomInt} from './utils';
-
+import makeTaskElement from './make-task';
 
 class Task {
   constructor(data) {
     this._title = data.title;
     this._dueDate = data.dueDate;
     this._tags = data.tags;
-    this._colors = data.colors;
     this._color = data.color;
     this._picture = data.picture;
     this._repeatingDays = data.repeatingDays;
     this._element = null;
     this._onEdit = null;
-
   }
 
   _isRepeated() {
@@ -21,7 +17,9 @@ class Task {
   }
 
   _onEditButtonClick() {
-    typeof this._onEdit === `function` && this._onEdit();
+    if (typeof this._onEdit === `function`) {
+      this._onEdit();
+    }
   }
 
   set onEdit(fn) {
@@ -60,10 +58,8 @@ class Task {
       </label></div>
       <div class="card__settings">
       <div class="card__details">
+
       <div class="card__dates">
-      <button class="card__date-deadline-toggle" type="button">
-      date: <span class="card__date-status">yes</span>
-      </button>
       <fieldset class="card__date-deadline">
       <label class="card__input-deadline-wrap">
       <input
@@ -79,34 +75,11 @@ class Task {
       name="time"
       value="${`${this._dueDate}`.substr(16, 5)}">
       </label></fieldset>
-
-      <button class="card__repeat-toggle" type="button">
-      repeat:<span class="card__repeat-status">yes</span></button>
-
-      <fieldset class="card__repeat-days">
-      <div class="card__repeat-days-inner">
-      ${Object.entries(this._repeatingDays)
-        .map(([key, value]) =>
-          `<input
-        class="visually-hidden card__repeat-day-input"
-        type="checkbox"
-        id="repeat-${key}-5"
-        name="repeat"
-        value="${key}"
-        ${value ? `checked` : ``}>
-        <label class="card__repeat-day" for="repeat-mo-5">${key}</label>
-        `)
-      .join(``)}
       </div>
-      </fieldset>
 
-      </div>
       <div class="card__hashtag">
       <div class="card__hashtag-list">
       ${[...this._tags]
-        .slice()
-        .sort(compareRandom)
-        .slice(0, getRandomInt(0, 3))
         .map((it) => `
         <span class="card__hashtag-inner">
         <input
@@ -116,55 +89,11 @@ class Task {
         class="card__hashtag-hidden-input">
         <button type="button" class="card__hashtag-name">
         ${it}</button>
-        <button type="button" class="card__hashtag-delete">
-        delete</button>
         </span>`
         )
         .join(` `)}
       </div>
-      <label>
-      <input
-      type="text"
-      class="card__hashtag-input"
-      name="hashtag-input"
-      placeholder="Type new hashtag here">
-      </label>
       </div></div>
-      <label class="card__img-wrap card__img-wrap--empty">
-      <input
-      type="file"
-      class="card__img-input visually-hidden"
-      name="img">
-      <img
-      src="${this._picture}"
-      alt="task picture"
-      class="card__img">
-      </label>
-      <div class="card__colors-inner">
-      <h3 class="card__colors-title">Color</h3>
-      <div class="card__colors-wrap">
-
-      ${this._colors
-      .map((it) =>
-        `<input
-      type="radio"
-      id="color-${it}-5"
-      class="card__color-input card__color-input--${it} visually-hidden"
-      name="color"
-      value="${it}"
-      ${it === this._color ? `checked` : ``}>
-      <label
-      for="color-${it}-5"
-      class="card__color card__color--${it}">${it}</label>`
-      )
-    .join(``)}
-      
-      </div>
-      </div>
-      </div>
-      <div class="card__status-btns">
-      <button class="card__save" type="submit">save</button>
-      <button class="card__delete" type="button">delete</button>
       </div>
       </div>
       </form>
@@ -173,7 +102,7 @@ class Task {
   }
 
   render() {
-    this._element = createTaskElement(this.template);
+    this._element = makeTaskElement(this.template);
     this.bind();
     return this._element;
   }
@@ -192,7 +121,6 @@ class Task {
     this._element.querySelector(`.card__btn--edit`).
     removeEventListener(`click`, this._onEditButtonClick);
   }
-
 }
 
 export default Task;

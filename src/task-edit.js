@@ -1,6 +1,4 @@
-import createTaskElement from './make-task';
-import {compareRandom, getRandomInt} from './utils';
-
+import makeTaskElement from './make-task';
 
 class TaskEdit {
   constructor(data) {
@@ -21,7 +19,9 @@ class TaskEdit {
 
   _onSubmitButtonClick(evt) {
     evt.preventDefault();
-    typeof this._onSubmit === `function` && this._onSubmit();
+    if (typeof this._onSubmit === `function`) {
+      this._onSubmit();
+    }
   }
 
   set onSubmit(fn) {
@@ -81,8 +81,9 @@ class TaskEdit {
       </label></fieldset>
 
       <button class="card__repeat-toggle" type="button">
-      repeat:<span class="card__repeat-status">yes</span></button>
-
+      repeat:<span class="card__repeat-status">
+      ${this._isRepeated() ? `yes` : `no`}
+      </span></button>
       <fieldset class="card__repeat-days">
       <div class="card__repeat-days-inner">
       ${Object.entries(this._repeatingDays)
@@ -104,9 +105,6 @@ class TaskEdit {
       <div class="card__hashtag">
       <div class="card__hashtag-list">
       ${[...this._tags]
-        .slice()
-        .sort(compareRandom)
-        .slice(0, getRandomInt(0, 3))
         .map((it) => `
         <span class="card__hashtag-inner">
         <input
@@ -173,7 +171,7 @@ class TaskEdit {
   }
 
   render() {
-    this._element = createTaskElement(this.template);
+    this._element = makeTaskElement(this.template);
     this.bind();
     return this._element;
   }
@@ -192,13 +190,6 @@ class TaskEdit {
     this._element.querySelector(`.card__form`).
       removeEventListener(`submit`, this._onSubmitButtonClick);
   }
-
-  update() {
-    return this._state.isEdit ?
-      this._element.classList.add(`card--edit`) :
-      this._element.classList.remove(`card--edit`);
-  }
-
 }
 
 export default TaskEdit;
