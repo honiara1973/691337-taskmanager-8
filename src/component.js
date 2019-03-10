@@ -29,7 +29,7 @@ class Component {
     this._element = null;
   }
 
-  addListeners() {}
+  createListeners() {}
   removeListeners() {}
 
 }
