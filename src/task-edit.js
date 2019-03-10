@@ -1,7 +1,8 @@
-import makeTaskElement from './make-task';
+import Component from './component';
 
-class TaskEdit {
+class TaskEdit extends Component {
   constructor(data) {
+    super();
     this._title = data.title;
     this._dueDate = data.dueDate;
     this._tags = data.tags;
@@ -9,8 +10,9 @@ class TaskEdit {
     this._color = data.color;
     this._picture = data.picture;
     this._repeatingDays = data.repeatingDays;
-    this._element = null;
     this._onSubmit = null;
+
+    this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
   }
 
   _isRepeated() {
@@ -26,10 +28,6 @@ class TaskEdit {
 
   set onSubmit(fn) {
     this._onSubmit = fn;
-  }
-
-  get element() {
-    return this._element;
   }
 
   get template() {
@@ -156,7 +154,7 @@ class TaskEdit {
       class="card__color card__color--${it}">${it}</label>`
       )
     .join(``)}
-      
+
       </div>
       </div>
       </div>
@@ -170,23 +168,12 @@ class TaskEdit {
       `.trim();
   }
 
-  render() {
-    this._element = makeTaskElement(this.template);
-    this.bind();
-    return this._element;
-  }
-
-  unrender() {
-    this.unbind();
-    this._element = null;
-  }
-
-  bind() {
+  createListeners() {
     this._element.querySelector(`.card__form`).
-      addEventListener(`submit`, this._onSubmitButtonClick.bind(this));
+      addEventListener(`submit`, this._onSubmitButtonClick);
   }
 
-  unbind() {
+  removeListeners() {
     this._element.querySelector(`.card__form`).
       removeEventListener(`submit`, this._onSubmitButtonClick);
   }
