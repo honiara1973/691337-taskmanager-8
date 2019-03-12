@@ -30,7 +30,10 @@ const renderTaskElement = (data) => {
     taskCard.unrender();
   };
 
-  taskCardEdit.onSubmit = () => {
+  taskCardEdit.onSubmit = (newObject) => {
+    data.title = newObject.title;
+    data.color = newObject.color;
+    taskCard.update(data);
     taskCard.render();
     boardTasksContainer.replaceChild(taskCard.element, taskCardEdit.element);
     taskCardEdit.unrender();

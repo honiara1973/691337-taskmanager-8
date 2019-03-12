@@ -13,17 +13,47 @@ class TaskEdit extends Component {
     this._onSubmit = null;
 
     this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
+    // Нужен ли bind для color? Вроде и так всё работает.
   }
 
   _isRepeated() {
     return Object.values(this._repeatingDays).some((it) => it === true);
   }
 
+  _processForm(formData) {
+    const entry = {
+      title: ``,
+      color: ``,
+    };
+
+    const taskEditMapper = TaskEdit.createMapper(entry);
+
+    for (const pair of formData.entries()) {
+      const [property, value] = pair;
+
+      if (taskEditMapper[property]) {
+        taskEditMapper[property](value);
+      }
+    }
+
+    return entry;
+  }
+
+  _onChangeColor(evt) {
+    this._color = evt.target.value;
+  }
+
   _onSubmitButtonClick(evt) {
     evt.preventDefault();
+
+    const formData = new FormData(this._element.querySelector(`.card__form`));
+    const newData = this._processForm(formData);
+
     if (typeof this._onSubmit === `function`) {
-      this._onSubmit();
+      this._onSubmit(newData);
     }
+
+    this.update(newData);
   }
 
   set onSubmit(fn) {
@@ -171,12 +201,29 @@ class TaskEdit extends Component {
   createListeners() {
     this._element.querySelector(`.card__form`).
       addEventListener(`submit`, this._onSubmitButtonClick);
+    this._element.querySelector(`.card__colors-wrap`).
+     addEventListener(`click`, this._onChangeColor);
   }
 
   removeListeners() {
     this._element.querySelector(`.card__form`).
       removeEventListener(`submit`, this._onSubmitButtonClick);
+    this._element.querySelector(`.card__colors-wrap`).
+    removeEventListener(`click`, this._onChangeColor);
   }
+
+  update(data) {
+    this._title = data.title;
+    this._color = data.color;
+  }
+
+  static createMapper(target) {
+    return {
+      text: (value) => (target.title = value),
+      color: (value) => (target.color = value),
+    };
+  }
+
 }
 
 export default TaskEdit;

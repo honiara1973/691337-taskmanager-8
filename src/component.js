@@ -31,6 +31,7 @@ class Component {
 
   createListeners() {}
   removeListeners() {}
+  update() {}
 
 }
 

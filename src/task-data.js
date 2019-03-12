@@ -21,7 +21,8 @@ const getTasks = (amount) => {
 
       picture: `http://picsum.photos/100/100?r=${Math.random()}`,
       colors: Colors,
-      color: getRandomElement(Colors),
+      //color: getRandomElement(Colors),
+      color: `black`,
       repeatingDays: {
         'mo': getRandomElement([true, false]),
         'tu': getRandomElement([true, false]),

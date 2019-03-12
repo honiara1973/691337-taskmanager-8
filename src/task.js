@@ -109,6 +109,11 @@ class Task extends Component {
     .removeEventListener(`click`, this._onEditButtonClick);
   }
 
+  update(data) {
+    this._title = data.title;
+    this._color = data.color;
+  }
+
 }
 
 export default Task;
