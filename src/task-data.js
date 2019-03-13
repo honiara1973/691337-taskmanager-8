@@ -11,7 +11,7 @@ const getTasks = (amount) => {
 
   for (let i = 0; i < amount; i++) {
     const task = {
-      title: getRandomElement([`Изучить теорию`, `Сделать домашку`, `Пройти интенсив на соточку`]),
+      title: ``, //getRandomElement([`Изучить теорию`, `Сделать домашку`, `Пройти интенсив на соточку`]),
       dueDate: new Date(getRandomInt(Date.now() - MS_IN_WEEK, Date.now() + MS_IN_WEEK)),
 
       tags: new Set([...Tags]
@@ -24,13 +24,13 @@ const getTasks = (amount) => {
       //color: getRandomElement(Colors),
       color: `black`,
       repeatingDays: {
-        'mo': getRandomElement([true, false]),
-        'tu': getRandomElement([true, false]),
-        'we': getRandomElement([true, false]),
-        'th': getRandomElement([true, false]),
-        'fr': getRandomElement([true, false]),
-        'sa': getRandomElement([true, false]),
-        'su': getRandomElement([true, false]),
+        'mo': false,
+        'tu': false,
+        'we': false,
+        'th': false,
+        'fr': false,
+        'sa': false,
+        'su': false,
       },
 
       isFavorite: false,

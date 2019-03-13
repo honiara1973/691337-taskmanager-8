@@ -23,7 +23,18 @@ class TaskEdit extends Component {
   _processForm(formData) {
     const entry = {
       title: ``,
+      dueDate: new Date(),
       color: ``,
+      tags: this._tags,
+      repeatingDays: {
+        'mo': false,
+        'tu': false,
+        'we': false,
+        'th': false,
+        'fr': false,
+        'sa': false,
+        'su': false,
+      },
     };
 
     const taskEditMapper = TaskEdit.createMapper(entry);
@@ -112,6 +123,7 @@ class TaskEdit extends Component {
       repeat:<span class="card__repeat-status">
       ${this._isRepeated() ? `yes` : `no`}
       </span></button>
+
       <fieldset class="card__repeat-days">
       <div class="card__repeat-days-inner">
       ${Object.entries(this._repeatingDays)
@@ -123,7 +135,7 @@ class TaskEdit extends Component {
         name="repeat"
         value="${key}"
         ${value ? `checked` : ``}>
-        <label class="card__repeat-day" for="repeat-mo-5">${key}</label>
+        <label class="card__repeat-day" for="repeat-${key}-5">${key}</label>
         `)
       .join(``)}
       </div>
@@ -148,6 +160,7 @@ class TaskEdit extends Component {
         )
         .join(` `)}
       </div>
+
       <label>
       <input
       type="text"
@@ -156,6 +169,7 @@ class TaskEdit extends Component {
       placeholder="Type new hashtag here">
       </label>
       </div></div>
+      
       <label class="card__img-wrap card__img-wrap--empty">
       <input
       type="file"
@@ -215,12 +229,22 @@ class TaskEdit extends Component {
   update(data) {
     this._title = data.title;
     this._color = data.color;
+    this._repeatingDays = data.repeatingDays;
+    this._tags = data.tags;
+    this._dueDate = data.dueDate;
   }
 
   static createMapper(target) {
     return {
       text: (value) => (target.title = value),
       color: (value) => (target.color = value),
+      repeat: (value) => (target.repeatingDays[value] = true),
+      date: (value) => (target.dueDate[value]),
+      [`hashtag-input`]: (value) => {
+        if (value.length > 0) {
+          value.split(` `).forEach((it) => target.tags.add(it));
+        }
+      },
     };
   }
 
