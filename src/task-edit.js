@@ -1,4 +1,5 @@
 import Component from './component';
+import * as moment from 'moment';
 
 class TaskEdit extends Component {
   constructor(data) {
@@ -11,19 +12,16 @@ class TaskEdit extends Component {
     this._picture = data.picture;
     this._repeatingDays = data.repeatingDays;
     this._onSubmit = null;
-
+    this._state.isDate = false;
+    this._onChangeDate = this._onChangeDate.bind(this);
     this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
     // Нужен ли bind для color? Вроде и так всё работает.
-  }
-
-  _isRepeated() {
-    return Object.values(this._repeatingDays).some((it) => it === true);
   }
 
   _processForm(formData) {
     const entry = {
       title: ``,
-      dueDate: new Date(),
+      dueDate: ``,
       color: ``,
       tags: this._tags,
       repeatingDays: {
@@ -50,8 +48,22 @@ class TaskEdit extends Component {
     return entry;
   }
 
+  _isRepeated() {
+    return Object.values(this._repeatingDays).some((it) => it === true);
+  }
   _onChangeColor(evt) {
     this._color = evt.target.value;
+  }
+
+  _onChangeDate() {
+    this._state.isDate = !this._state.isDate;
+    this.removeListeners();
+    this._partialUpdate();
+    this.createListeners();
+  }
+
+  _partialUpdate() {
+    this._element.innerHTML = this.template;
   }
 
   _onSubmitButtonClick(evt) {
@@ -101,22 +113,22 @@ class TaskEdit extends Component {
       <div class="card__details">
       <div class="card__dates">
       <button class="card__date-deadline-toggle" type="button">
-      date: <span class="card__date-status">yes</span>
+      date: <span class="card__date-status">${this._state.isDate ? `yes` : `no`}</span>
       </button>
-      <fieldset class="card__date-deadline">
+      <fieldset class="card__date-deadline" ${!this._state.isDate ? `disabled` : ``}>
       <label class="card__input-deadline-wrap">
       <input
       class="card__date"
       type="text"
       placeholder="23 September"
       name="date"
-      value="${`${this._dueDate}`.substr(4, 6)}"></label>
+      value="${moment(this._dueDate).format(`ll`)}"></label>
       <label class="card__input-deadline-wrap">
       <input class="card__time"
       type="text"
       placeholder="11:15 PM"
       name="time"
-      value="${`${this._dueDate}`.substr(16, 5)}">
+      value="${moment(this._dueDate).format(`LT`)}">
       </label></fieldset>
 
       <button class="card__repeat-toggle" type="button">
@@ -217,6 +229,8 @@ class TaskEdit extends Component {
       addEventListener(`submit`, this._onSubmitButtonClick);
     this._element.querySelector(`.card__colors-wrap`).
      addEventListener(`click`, this._onChangeColor);
+    this._element.querySelector(`.card__date-deadline-toggle`).
+    addEventListener(`click`, this._onChangeDate);
   }
 
   removeListeners() {
@@ -224,6 +238,8 @@ class TaskEdit extends Component {
       removeEventListener(`submit`, this._onSubmitButtonClick);
     this._element.querySelector(`.card__colors-wrap`).
     removeEventListener(`click`, this._onChangeColor);
+    this._element.querySelector(`.card__date-deadline-toggle`).
+    removeEventListener(`click`, this._onChangeDate);
   }
 
   update(data) {
@@ -239,7 +255,7 @@ class TaskEdit extends Component {
       text: (value) => (target.title = value),
       color: (value) => (target.color = value),
       repeat: (value) => (target.repeatingDays[value] = true),
-      date: (value) => (target.dueDate[value]),
+      date: (value) => (target.dueDate = moment(value)),
       [`hashtag-input`]: (value) => {
         if (value.length > 0) {
           value.split(` `).forEach((it) => target.tags.add(it));

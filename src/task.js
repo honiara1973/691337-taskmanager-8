@@ -1,4 +1,5 @@
 import Component from './component';
+import * as moment from 'moment';
 
 class Task extends Component {
   constructor(data) {
@@ -65,13 +66,13 @@ class Task extends Component {
       type="text"
       placeholder="23 September"
       name="date"
-      value="${`${this._dueDate}`.substr(4, 6)}"></label>
+      value="${moment(this._dueDate).format(`MMM Do`)}"></label>
       <label class="card__input-deadline-wrap">
       <input class="card__time"
       type="text"
       placeholder="11:15 PM"
       name="time"
-      value="${`${this._dueDate}`.substr(16, 5)}">
+      value="${moment(this._dueDate).format(`LT`)}">
       </label></fieldset>
       </div>
 
