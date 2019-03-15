@@ -13,7 +13,6 @@ const getTasks = (amount) => {
     const task = {
       title: ``, //getRandomElement([`Изучить теорию`, `Сделать домашку`, `Пройти интенсив на соточку`]),
       dueDate: new Date(getRandomInt(Date.now() - MS_IN_WEEK, Date.now() + MS_IN_WEEK)),
-
       tags: new Set([...Tags]
       .slice()
       .sort(compareRandom)
