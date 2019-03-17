@@ -1,6 +1,6 @@
 import Component from './component';
 import * as moment from 'moment';
-// import * as flatpickr from 'flatpickr';
+import flatpickr from 'flatpickr';
 
 class TaskEdit extends Component {
   constructor(data) {
@@ -17,6 +17,8 @@ class TaskEdit extends Component {
     this._state.isDate = false;
     this._onChangeDate = this._onChangeDate.bind(this);
     this._onChangeRepeated = this._onChangeRepeated.bind(this);
+    this._onChangeText = this._onChangeText.bind(this);
+   // this._onInputDate = this._onInputDate.bind(this);
     this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
     // Нужен ли bind для color? Вроде и так всё работает.
   }
@@ -24,7 +26,7 @@ class TaskEdit extends Component {
   _processForm(formData) {
     const entry = {
       title: ``,
-      dueDate: moment(),
+      dueDate: new Date(),
       color: ``,
       tags: this._tags,
       repeatingDays: {
@@ -75,6 +77,22 @@ class TaskEdit extends Component {
     this.createListeners();
   }
 
+  _onChangeText(evt) {
+    this._title = evt.target.value;
+  }
+/*
+  _onInputDate(evt) {
+    const element = evt.target;
+    console.log(`it is change`);
+    console.log(element);
+    flatpickr(element, {altInput: true,
+      altFormat: `j F`,
+      dateFormat: `j F`});
+    console.log(element);
+
+  }
+*/
+
   _partialUpdate() {
     this._element.innerHTML = this.template;
   }
@@ -84,12 +102,13 @@ class TaskEdit extends Component {
 
     const formData = new FormData(this._element.querySelector(`.card__form`));
     const newData = this._processForm(formData);
-
+    //newData.dueDate[`value`] = moment(`2000-01-01`).format(`DD MMM`);
     if (typeof this._onSubmit === `function`) {
       this._onSubmit(newData);
     }
 
     this.update(newData);
+    console.log(this._dueDate);
   }
 
   set onSubmit(fn) {
@@ -135,13 +154,13 @@ class TaskEdit extends Component {
       type="text"
       placeholder="23 September"
       name="date"
-      value="${moment(this._dueDate).format(`MMM DD`)}"></label>
+      value=""></label>
       <label class="card__input-deadline-wrap">
       <input class="card__time"
       type="text"
       placeholder="11:15 PM"
       name="time"
-      value="${moment(this._dueDate).format(`h:mm a`)}">
+      value="">
       </label></fieldset>
 
       <button class="card__repeat-toggle" type="button">
@@ -194,7 +213,7 @@ class TaskEdit extends Component {
       placeholder="Type new hashtag here">
       </label>
       </div></div>
-      
+
       <label class="card__img-wrap card__img-wrap--empty">
       <input
       type="file"
@@ -238,33 +257,48 @@ class TaskEdit extends Component {
   }
 
   createListeners() {
-    this._element.querySelector(`.card__form`).
-      addEventListener(`submit`, this._onSubmitButtonClick);
-    this._element.querySelector(`.card__colors-wrap`).
-     addEventListener(`click`, this._onChangeColor);
-    this._element.querySelector(`.card__date-deadline-toggle`).
-    addEventListener(`click`, this._onChangeDate);
-    this._element.querySelector(`.card__repeat-toggle`).
-    addEventListener(`click`, this._onChangeRepeated);
-
-    /*
+    this._element.querySelector(`.card__form`)
+    .addEventListener(`submit`, this._onSubmitButtonClick);
+    this._element.querySelector(`.card__colors-wrap`)
+    .addEventListener(`click`, this._onChangeColor);
+    this._element.querySelector(`.card__date-deadline-toggle`)
+    .addEventListener(`click`, this._onChangeDate);
+    this._element.querySelector(`.card__repeat-toggle`)
+    .addEventListener(`click`, this._onChangeRepeated);
+    this._element.querySelector(`.card__text`)
+    .addEventListener(`change`, this._onChangeText);
+  /*  this._element.querySelector(`.card__date`)
+    .addEventListener(`click`, this._onInputDate);
+*/
     if (this._state.isDate) {
-      flatpickr(`.card__date`, {altInput: true, altFormat: `j F`, dateFormat: `j F`});
-      flatpickr(`.card__time`, {enableTime: true, noCalendar: true, altInput: true,
-      altFormat: `h:i K`, dateFormat: `h:i K`});
+      flatpickr(".card__date", { altInput: true, altFormat: "j F", dateFormat: "j F" });
+      flatpickr(".card__time", { enableTime: true, noCalendar: true, altInput: true, altFormat: "h:i K", dateFormat: "h:i K"});
+    console.log(this._element.querySelector(`.card__date`));
     }
-    */
+
   }
 
+ /* if (this._state.isDate) {
+    flatpickr(this._element.querySelector(`.card__date`), {});
+
+    flatpickr(`.card__time`, {enableTime: true, noCalendar: true, altInput: true,
+    //altFormat: `h:i K`, dateFormat: `h:i K`});
+  }
+*/
+
   removeListeners() {
-    this._element.querySelector(`.card__form`).
-      removeEventListener(`submit`, this._onSubmitButtonClick);
-    this._element.querySelector(`.card__colors-wrap`).
-    removeEventListener(`click`, this._onChangeColor);
-    this._element.querySelector(`.card__date-deadline-toggle`).
-    removeEventListener(`click`, this._onChangeDate);
-    this._element.querySelector(`.card__repeat-toggle`).
-    removeEventListener(`click`, this._onChangeRepeated);
+    this._element.querySelector(`.card__form`)
+    .removeEventListener(`submit`, this._onSubmitButtonClick);
+    this._element.querySelector(`.card__colors-wrap`)
+    .removeEventListener(`click`, this._onChangeColor);
+    this._element.querySelector(`.card__date-deadline-toggle`)
+    .removeEventListener(`click`, this._onChangeDate);
+    this._element.querySelector(`.card__repeat-toggle`)
+    .removeEventListener(`click`, this._onChangeRepeated);
+    this._element.querySelector(`.card__text`)
+    .removeEventListener(`change`, this._onChangeText);
+   /* this._element.querySelector(`.card__date`)
+    .removeEventListener(`click`, this._onInputDate);*/
   }
 
   update(data) {
@@ -280,8 +314,7 @@ class TaskEdit extends Component {
       text: (value) => (target.title = value),
       color: (value) => (target.color = value),
       repeat: (value) => (target.repeatingDays[value] = true),
-      date: (value) => (target.dueDate = moment(value)),
-      // time: (value) => (target.dueDate = moment(value)),
+      date: (value) => (target.dueDate[value] = value),
 
       [`hashtag-input`]: (value) => {
         if (value.length > 0) {
