@@ -80,8 +80,8 @@ class TaskEdit extends Component {
   _onChangeText(evt) {
     this._title = evt.target.value;
   }
-/*
-  _onInputDate(evt) {
+
+  /*_onInputDate(evt) {
     const element = evt.target;
     console.log(`it is change`);
     console.log(element);
@@ -91,7 +91,17 @@ class TaskEdit extends Component {
     console.log(element);
 
   }
-*/
+
+  _onInputTime(evt) {
+    const element = evt.target;
+    console.log(`it is change`);
+    console.log(element);
+    flatpickr(element, {enableTime: true, noCalendar: true, altInput: true,
+      altFormat: `h:i K`, dateFormat: `h:i K`});
+    console.log(element);
+  }
+  */
+
 
   _partialUpdate() {
     this._element.innerHTML = this.template;
@@ -154,13 +164,13 @@ class TaskEdit extends Component {
       type="text"
       placeholder="23 September"
       name="date"
-      value=""></label>
+      value="${this._dueDate && moment(this._dueDate).format(`DD MMMM`)}"></label>
       <label class="card__input-deadline-wrap">
       <input class="card__time"
       type="text"
       placeholder="11:15 PM"
       name="time"
-      value="">
+      value="${this._dueDate && moment(this._dueDate).format(`hh:mm`)}">
       </label></fieldset>
 
       <button class="card__repeat-toggle" type="button">
@@ -267,25 +277,21 @@ class TaskEdit extends Component {
     .addEventListener(`click`, this._onChangeRepeated);
     this._element.querySelector(`.card__text`)
     .addEventListener(`change`, this._onChangeText);
-  /*  this._element.querySelector(`.card__date`)
+    /*
+    this._element.querySelector(`.card__date`)
     .addEventListener(`click`, this._onInputDate);
+    this._element.querySelector(`.card__time`)
+    .addEventListener(`click`, this._onInputTime);
 */
-    if (this._state.isDate) {
-      flatpickr(`.card__date`, {altInput: true, altFormat: `j F`, dateFormat: `j F`});
+
+   if (this._state.isDate) {
+      flatpickr(`.card__date`, {altInput: true, altFormat: `F j, Y`, dateFormat: `Y-m-d`});
       flatpickr(`.card__time`, {enableTime: true, noCalendar: true, altInput: true,
         altFormat: `h:i K`, dateFormat: `h:i K`});
-    console.log(this._element.querySelector(`.card__date`));
+     //console.log(this._element.querySelector(`.card__date`));
     }
-
+    
   }
-
- /* if (this._state.isDate) {
-    flatpickr(this._element.querySelector(`.card__date`), {});
-
-    flatpickr(`.card__time`, {enableTime: true, noCalendar: true, altInput: true,
-    //altFormat: `h:i K`, dateFormat: `h:i K`});
-  }
-*/
 
   removeListeners() {
     this._element.querySelector(`.card__form`)
@@ -298,8 +304,12 @@ class TaskEdit extends Component {
     .removeEventListener(`click`, this._onChangeRepeated);
     this._element.querySelector(`.card__text`)
     .removeEventListener(`change`, this._onChangeText);
-   /* this._element.querySelector(`.card__date`)
-    .removeEventListener(`click`, this._onInputDate);*/
+    /*
+    this._element.querySelector(`.card__date`)
+    .removeEventListener(`click`, this._onInputDate);
+    this._element.querySelector(`.card__time`)
+    .removeEventListener(`click`, this._onInputTime);
+    */
   }
 
   update(data) {
