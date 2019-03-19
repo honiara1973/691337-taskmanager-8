@@ -18,7 +18,8 @@ class TaskEdit extends Component {
     this._onChangeDate = this._onChangeDate.bind(this);
     this._onChangeRepeated = this._onChangeRepeated.bind(this);
     this._onChangeText = this._onChangeText.bind(this);
-   // this._onInputDate = this._onInputDate.bind(this);
+    this._onInputDate = this._onInputDate.bind(this);
+    this._onInputTime = this._onInputTime.bind(this);
     this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
     // Нужен ли bind для color? Вроде и так всё работает.
   }
@@ -26,7 +27,10 @@ class TaskEdit extends Component {
   _processForm(formData) {
     const entry = {
       title: ``,
-      dueDate: new Date(),
+      dueDate: {
+        date: new Date(),
+        time: new Date(),
+      },
       color: ``,
       tags: this._tags,
       repeatingDays: {
@@ -81,27 +85,18 @@ class TaskEdit extends Component {
     this._title = evt.target.value;
   }
 
-  /*_onInputDate(evt) {
+  _onInputDate(evt) {
     const element = evt.target;
-    console.log(`it is change`);
-    console.log(element);
     flatpickr(element, {altInput: true,
       altFormat: `j F`,
       dateFormat: `j F`});
-    console.log(element);
-
   }
 
   _onInputTime(evt) {
     const element = evt.target;
-    console.log(`it is change`);
-    console.log(element);
     flatpickr(element, {enableTime: true, noCalendar: true, altInput: true,
       altFormat: `h:i K`, dateFormat: `h:i K`});
-    console.log(element);
   }
-  */
-
 
   _partialUpdate() {
     this._element.innerHTML = this.template;
@@ -112,13 +107,10 @@ class TaskEdit extends Component {
 
     const formData = new FormData(this._element.querySelector(`.card__form`));
     const newData = this._processForm(formData);
-    //newData.dueDate[`value`] = moment(`2000-01-01`).format(`DD MMM`);
     if (typeof this._onSubmit === `function`) {
       this._onSubmit(newData);
     }
-
     this.update(newData);
-    console.log(this._dueDate);
   }
 
   set onSubmit(fn) {
@@ -164,13 +156,13 @@ class TaskEdit extends Component {
       type="text"
       placeholder="23 September"
       name="date"
-      value="${this._dueDate && moment(this._dueDate).format(`DD MMMM`)}"></label>
+      value="${moment(this._dueDate.date).format(`DD MMMM`)}"></label>
       <label class="card__input-deadline-wrap">
       <input class="card__time"
       type="text"
       placeholder="11:15 PM"
       name="time"
-      value="${this._dueDate && moment(this._dueDate).format(`hh:mm`)}">
+      value="${moment(this._dueDate.time).format(`hh:mm`)}">
       </label></fieldset>
 
       <button class="card__repeat-toggle" type="button">
@@ -277,20 +269,10 @@ class TaskEdit extends Component {
     .addEventListener(`click`, this._onChangeRepeated);
     this._element.querySelector(`.card__text`)
     .addEventListener(`change`, this._onChangeText);
-    /*
     this._element.querySelector(`.card__date`)
     .addEventListener(`click`, this._onInputDate);
     this._element.querySelector(`.card__time`)
     .addEventListener(`click`, this._onInputTime);
-*/
-
-   if (this._state.isDate) {
-      flatpickr(`.card__date`, {altInput: true, altFormat: `F j, Y`, dateFormat: `Y-m-d`});
-      flatpickr(`.card__time`, {enableTime: true, noCalendar: true, altInput: true,
-        altFormat: `h:i K`, dateFormat: `h:i K`});
-     //console.log(this._element.querySelector(`.card__date`));
-    }
-    
   }
 
   removeListeners() {
@@ -304,12 +286,10 @@ class TaskEdit extends Component {
     .removeEventListener(`click`, this._onChangeRepeated);
     this._element.querySelector(`.card__text`)
     .removeEventListener(`change`, this._onChangeText);
-    /*
     this._element.querySelector(`.card__date`)
     .removeEventListener(`click`, this._onInputDate);
     this._element.querySelector(`.card__time`)
     .removeEventListener(`click`, this._onInputTime);
-    */
   }
 
   update(data) {
@@ -325,7 +305,8 @@ class TaskEdit extends Component {
       text: (value) => (target.title = value),
       color: (value) => (target.color = value),
       repeat: (value) => (target.repeatingDays[value] = true),
-      date: (value) => (target.dueDate[value] = value),
+      date: (value) => (target.dueDate.date = value),
+      time: (value) => (target.dueDate.time[value]),
 
       [`hashtag-input`]: (value) => {
         if (value.length > 0) {

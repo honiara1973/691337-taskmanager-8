@@ -1,4 +1,4 @@
-import {getRandomInt, getRandomElement, compareRandom} from './utils';
+import {getRandomInt, compareRandom} from './utils';
 
 const MS_IN_WEEK = 7 * 24 * 60 * 60 * 1000;
 const Colors = [`black`, `yellow`, `blue`, `green`, `pink`];
@@ -11,8 +11,11 @@ const getTasks = (amount) => {
 
   for (let i = 0; i < amount; i++) {
     const task = {
-      title: ``, //getRandomElement([`Изучить теорию`, `Сделать домашку`, `Пройти интенсив на соточку`]),
-      dueDate: new Date(getRandomInt(Date.now() - MS_IN_WEEK, Date.now() + MS_IN_WEEK)),
+      title: ``, // getRandomElement([`Изучить теорию`, `Сделать домашку`, `Пройти интенсив на соточку`]),
+      dueDate: {
+        date: new Date(getRandomInt(Date.now() - MS_IN_WEEK, Date.now() + MS_IN_WEEK)),
+        time: new Date(),
+      },
       tags: new Set([...Tags]
       .slice()
       .sort(compareRandom)
@@ -20,7 +23,6 @@ const getTasks = (amount) => {
 
       picture: `http://picsum.photos/100/100?r=${Math.random()}`,
       colors: Colors,
-      //color: getRandomElement(Colors),
       color: `black`,
       repeatingDays: {
         'mo': false,
