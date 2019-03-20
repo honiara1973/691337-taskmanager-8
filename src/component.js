@@ -7,6 +7,7 @@ class Component {
       throw new Error(`Can't instantiate BaseComponent, only concrete one.`);
     }
     this._element = null;
+    this._state = {};
   }
 
   get element() {
@@ -31,6 +32,7 @@ class Component {
 
   createListeners() {}
   removeListeners() {}
+  update() {}
 
 }
 
