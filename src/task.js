@@ -66,14 +66,9 @@ class Task extends Component {
       type="text"
       placeholder="23 September"
       name="date"
-      value="${moment(this._dueDate.date).format(`DD MMMM`)}"></label>
-      <label class="card__input-deadline-wrap">
-      <input class="card__time"
-      type="text"
-      placeholder="11:15 PM"
-      name="time"
-      value="${moment(this._dueDate.time).format(`hh:mm`)}">
-      </label></fieldset>
+      value="${moment(this._dueDate.date).format(`DD MMMM`)} ${moment(this._dueDate.time).format(`hh:mm`)}">
+      </label>
+      </fieldset>
       </div>
 
       <div class="card__hashtag">

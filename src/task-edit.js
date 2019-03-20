@@ -1,5 +1,4 @@
 import Component from './component';
-import * as moment from 'moment';
 import flatpickr from 'flatpickr';
 
 class TaskEdit extends Component {
@@ -89,13 +88,13 @@ class TaskEdit extends Component {
     const element = evt.target;
     flatpickr(element, {altInput: true,
       altFormat: `j F`,
-      dateFormat: `j F`});
+      dateFormat: `Y-m-d`});
   }
 
   _onInputTime(evt) {
     const element = evt.target;
     flatpickr(element, {enableTime: true, noCalendar: true, altInput: true,
-      altFormat: `h:i K`, dateFormat: `h:i K`});
+      altFormat: `h:i K`, dateFormat: `Y-m-d h:i:S`});
   }
 
   _partialUpdate() {
@@ -156,13 +155,13 @@ class TaskEdit extends Component {
       type="text"
       placeholder="23 September"
       name="date"
-      value="${moment(this._dueDate.date).format(`DD MMMM`)}"></label>
+      value=""></label>
       <label class="card__input-deadline-wrap">
       <input class="card__time"
       type="text"
       placeholder="11:15 PM"
       name="time"
-      value="${moment(this._dueDate.time).format(`hh:mm`)}">
+      value="">
       </label></fieldset>
 
       <button class="card__repeat-toggle" type="button">
@@ -306,7 +305,7 @@ class TaskEdit extends Component {
       color: (value) => (target.color = value),
       repeat: (value) => (target.repeatingDays[value] = true),
       date: (value) => (target.dueDate.date = value),
-      time: (value) => (target.dueDate.time[value]),
+      time: (value) => (target.dueDate.time = value),
 
       [`hashtag-input`]: (value) => {
         if (value.length > 0) {
