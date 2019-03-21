@@ -66,7 +66,8 @@ class Task extends Component {
       type="text"
       placeholder="23 September"
       name="date"
-      value="${moment(this._dueDate.date).format(`DD MMMM`)} ${moment(this._dueDate.time).format(`hh:mm`)}">
+      value="${(this._dueDate.date || this._dueDate.time) === `` ? `` :
+    moment(this._dueDate.date).format(`DD MMMM`)} ${moment(this._dueDate.time).format(`hh:mm`)}">
       </label>
       </fieldset>
       </div>

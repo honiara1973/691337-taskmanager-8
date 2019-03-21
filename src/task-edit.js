@@ -12,6 +12,7 @@ class TaskEdit extends Component {
     this._picture = data.picture;
     this._repeatingDays = data.repeatingDays;
     this._onSubmit = null;
+    this._onDelete = null;
     this._state.isRepeated = false;
     this._state.isDate = false;
     this._onChangeDate = this._onChangeDate.bind(this);
@@ -20,6 +21,7 @@ class TaskEdit extends Component {
     this._onInputDate = this._onInputDate.bind(this);
     this._onInputTime = this._onInputTime.bind(this);
     this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
+    this._onDeleteButtonClick = this._onDeleteButtonClick.bind(this);
     // Нужен ли bind для color? Вроде и так всё работает.
   }
 
@@ -94,7 +96,7 @@ class TaskEdit extends Component {
   _onInputTime(evt) {
     const element = evt.target;
     flatpickr(element, {enableTime: true, noCalendar: true, altInput: true,
-      altFormat: `h:i K`, dateFormat: `Y-m-d h:i:S`});
+      altFormat: `h:i K`, dateFormat: `Y-m-d h:i`});
   }
 
   _partialUpdate() {
@@ -112,8 +114,19 @@ class TaskEdit extends Component {
     this.update(newData);
   }
 
+  _onDeleteButtonClick(evt) {
+    evt.preventDefault();
+    if (typeof this._onDelete === `function`) {
+      this._onDelete();
+    }
+  }
+
   set onSubmit(fn) {
     this._onSubmit = fn;
+  }
+
+  set onDelete(fn) {
+    this._onDelete = fn;
   }
 
   get template() {
@@ -260,6 +273,8 @@ class TaskEdit extends Component {
   createListeners() {
     this._element.querySelector(`.card__form`)
     .addEventListener(`submit`, this._onSubmitButtonClick);
+    this._element.querySelector(`.card__delete`)
+    .addEventListener(`click`, this._onDeleteButtonClick);
     this._element.querySelector(`.card__colors-wrap`)
     .addEventListener(`click`, this._onChangeColor);
     this._element.querySelector(`.card__date-deadline-toggle`)
@@ -277,6 +292,8 @@ class TaskEdit extends Component {
   removeListeners() {
     this._element.querySelector(`.card__form`)
     .removeEventListener(`submit`, this._onSubmitButtonClick);
+    this._element.querySelector(`.card__delete`)
+    .removeEventListener(`click`, this._onDeleteButtonClick);
     this._element.querySelector(`.card__colors-wrap`)
     .removeEventListener(`click`, this._onChangeColor);
     this._element.querySelector(`.card__date-deadline-toggle`)

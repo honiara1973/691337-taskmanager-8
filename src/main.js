@@ -3,14 +3,23 @@ import getTasks from './task-data';
 import Task from './task';
 import TaskEdit from './task-edit';
 
-import {getRandomInt} from './utils';
-
 const TASKS_AMOUNT_INITIAL = 7;
+const taskCards = getTasks(TASKS_AMOUNT_INITIAL);
 
 const Filters = [
   [`All`, 15], [`Overdue`, 0], [`Today`, 0], [`Favorites`, 7],
   [`Repeating`, 2], [`Tags`, 6], [`Archive`, 115]
 ];
+
+const deleteCard = (tasks, i) => {
+  tasks.splice(i, 1);
+  return tasks;
+};
+
+const updateCard = (tasks, i, newCard) => {
+  tasks[i] = Object.assign({}, tasks[i], newCard);
+  return tasks[i];
+};
 
 const filterContainer = document.querySelector(`.main__filter`);
 Filters.forEach(([first, second]) =>
@@ -18,38 +27,37 @@ Filters.forEach(([first, second]) =>
 
 const boardTasksContainer = document.querySelector(`.board__tasks`);
 
-const renderTaskElement = (data) => {
-  const taskCard = new Task(data);
-  const taskCardEdit = new TaskEdit(data);
+const getTaskCards = (tasks) => {
 
-  boardTasksContainer.appendChild(taskCard.render());
+  for (let i = 0; i < tasks.length; i++) {
+    const data = tasks[i];
+    const taskCard = new Task(data);
+    const taskCardEdit = new TaskEdit(data);
 
-  taskCard.onEdit = () => {
-    taskCardEdit.render();
-    boardTasksContainer.replaceChild(taskCardEdit.element, taskCard.element);
-    taskCard.unrender();
-  };
+    taskCard.onEdit = () => {
+      taskCardEdit.render();
+      boardTasksContainer.replaceChild(taskCardEdit.element, taskCard.element);
+      taskCard.unrender();
+    };
 
-  taskCardEdit.onSubmit = (newObject) => {
-    data.title = newObject.title;
-    data.color = newObject.color;
-    data.repeatingDays = newObject.repeatingDays;
-    data.tags = newObject.tags;
-    data.dueDate = newObject.dueDate;
-    taskCard.update(data);
-    taskCard.render();
-    boardTasksContainer.replaceChild(taskCard.element, taskCardEdit.element);
-    taskCardEdit.unrender();
-  };
+    taskCardEdit.onSubmit = (newObject) => {
+      const updatedCard = updateCard(tasks, i, newObject);
+      taskCard.update(updatedCard);
+      taskCard.render();
+      boardTasksContainer.replaceChild(taskCard.element, taskCardEdit.element);
+      taskCardEdit.unrender();
+    };
+
+    taskCardEdit.onDelete = () => {
+      deleteCard(tasks, i);
+      taskCardEdit.unrender();
+    };
+
+    boardTasksContainer.appendChild(taskCard.render());
+  }
 };
 
-const getTaskCards = (amount) => {
-  const taskCards = getTasks(amount);
-  return taskCards.forEach((it) =>
-    renderTaskElement(it));
-};
-
-getTaskCards(TASKS_AMOUNT_INITIAL);
+getTaskCards(taskCards);
 
 filterContainer.addEventListener(`click`, () => {
 
@@ -57,5 +65,5 @@ filterContainer.addEventListener(`click`, () => {
     boardTasksContainer.removeChild(boardTasksContainer.firstChild);
   }
 
-  getTaskCards(getRandomInt(1, 10));
+  getTaskCards(taskCards);
 });
