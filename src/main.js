@@ -1,15 +1,19 @@
-import makeFilterElement from './make-filter';
+//import makeFilterElement from './make-filter';
 import getTasks from './task-data';
 import Task from './task';
 import TaskEdit from './task-edit';
+import Filter from './filter';
+import getFilters from './filter-data';
 
 const TASKS_AMOUNT_INITIAL = 7;
+const allFilters = getFilters();
 const taskCards = getTasks(TASKS_AMOUNT_INITIAL);
 
-const Filters = [
+/*const Filters = [
   [`All`, 15], [`Overdue`, 0], [`Today`, 0], [`Favorites`, 7],
   [`Repeating`, 2], [`Tags`, 6], [`Archive`, 115]
 ];
+*/
 
 const deleteCard = (tasks, i) => {
   tasks.splice(i, 1);
@@ -22,10 +26,18 @@ const updateCard = (tasks, i, newCard) => {
 };
 
 const filterContainer = document.querySelector(`.main__filter`);
-Filters.forEach(([first, second]) =>
-  filterContainer.insertAdjacentHTML(`beforeEnd`, makeFilterElement(first, second)));
-
 const boardTasksContainer = document.querySelector(`.board__tasks`);
+
+const renderFilter = (data) => {
+  const filter = new Filter(data);
+
+  filterContainer.appendChild(filter.render());
+};
+
+const createFilterElements = () => {
+  allFilters
+  .forEach((it) => renderFilter(it));
+};
 
 const getTaskCards = (tasks) => {
 
@@ -57,7 +69,10 @@ const getTaskCards = (tasks) => {
   }
 };
 
+
+createFilterElements();
 getTaskCards(taskCards);
+
 
 filterContainer.addEventListener(`click`, () => {
 
