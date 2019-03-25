@@ -1,4 +1,4 @@
-//import makeFilterElement from './make-filter';
+// import makeFilterElement from './make-filter';
 import getTasks from './task-data';
 import Task from './task';
 import TaskEdit from './task-edit';
@@ -9,11 +9,8 @@ const TASKS_AMOUNT_INITIAL = 7;
 const allFilters = getFilters();
 const taskCards = getTasks(TASKS_AMOUNT_INITIAL);
 
-/*const Filters = [
-  [`All`, 15], [`Overdue`, 0], [`Today`, 0], [`Favorites`, 7],
-  [`Repeating`, 2], [`Tags`, 6], [`Archive`, 115]
-];
-*/
+const filterContainer = document.querySelector(`.main__filter`);
+const boardTasksContainer = document.querySelector(`.board__tasks`);
 
 const deleteCard = (tasks, i) => {
   tasks.splice(i, 1);
@@ -25,18 +22,32 @@ const updateCard = (tasks, i, newCard) => {
   return tasks[i];
 };
 
-const filterContainer = document.querySelector(`.main__filter`);
-const boardTasksContainer = document.querySelector(`.board__tasks`);
+const filterTasks = (tasks, filterName) => {
+  switch (filterName) {
+    case `filter__all`:
+      return taskCards;
+    case `filter__overdue`:
+      return taskCards.filter((it) => it.dueDate < Date.now());
+    case `filter__today`:
+      return taskCards.filter((it) => it.color === `green`);
+    case `filter__favorites`:
+      return taskCards.filter((it) => it.color === `pink`);
+    case `filter__repeating`:
+      return taskCards.filter((it) =>
+        Object.values(it.repeatingDays).some((el) => el === true));
+    default:
+      return [];
+  }
+
+};
 
 const renderFilter = (data) => {
   const filter = new Filter(data);
-
   filterContainer.appendChild(filter.render());
 };
 
 const createFilterElements = () => {
-  allFilters
-  .forEach((it) => renderFilter(it));
+  allFilters.forEach((it) => renderFilter(it));
 };
 
 const getTaskCards = (tasks) => {
@@ -69,16 +80,19 @@ const getTaskCards = (tasks) => {
   }
 };
 
-
 createFilterElements();
 getTaskCards(taskCards);
 
 
-filterContainer.addEventListener(`click`, () => {
+filterContainer.addEventListener(`change`, (evt) => {
+  const filterName = evt.target.id;
 
   while (boardTasksContainer.firstChild) {
     boardTasksContainer.removeChild(boardTasksContainer.firstChild);
   }
 
-  getTaskCards(taskCards);
+  const filteredTasks = filterTasks(taskCards, filterName);
+  getTaskCards(filteredTasks);
+
+  //getTaskCards(taskCards);
 });
