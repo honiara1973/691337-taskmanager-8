@@ -66,8 +66,10 @@ class Task extends Component {
       type="text"
       placeholder=""
       name="date"
-      value="${moment(this._dueDate.date).isValid() && moment(this._dueDate.time).isValid() ?
-    `${moment(this._dueDate.date).format(`DD MMMM`)} ${moment(this._dueDate.time).format(`hh:mm`)}` : ``}">
+      value="${moment(this._dueDate.date).isValid() ?
+    `${moment(this._dueDate.date).format(`DD MMMM`)}` : ``}
+     ${moment(this._dueDate.time).isValid() ?
+    `${moment(this._dueDate.time).format(`hh:mm`)}` : ``}">
       </label>
       </fieldset>
       </div>

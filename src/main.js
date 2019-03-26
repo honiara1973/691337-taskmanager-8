@@ -1,4 +1,6 @@
 // import makeFilterElement from './make-filter';
+import * as moment from 'moment';
+
 import getTasks from './task-data';
 import Task from './task';
 import TaskEdit from './task-edit';
@@ -8,6 +10,10 @@ import getFilters from './filter-data';
 const TASKS_AMOUNT_INITIAL = 7;
 const allFilters = getFilters();
 const taskCards = getTasks(TASKS_AMOUNT_INITIAL);
+
+const updatedData = {
+  date: ``,
+};
 
 const filterContainer = document.querySelector(`.main__filter`);
 const boardTasksContainer = document.querySelector(`.board__tasks`);
@@ -27,9 +33,10 @@ const filterTasks = (tasks, filterName) => {
     case `filter__all`:
       return taskCards;
     case `filter__overdue`:
-      return taskCards.filter((it) => it.dueDate < Date.now());
+      return taskCards.filter((it) => it.dueDate.date < Date.now());
     case `filter__today`:
-      return taskCards.filter((it) => it.color === `green`);
+      return taskCards.filter((it) =>
+        moment(it.dueDate.date).format(`DD MMMM`) === (moment().format(`DD MMMM`)));
     case `filter__favorites`:
       return taskCards.filter((it) => it.color === `pink`);
     case `filter__repeating`:
@@ -69,6 +76,7 @@ const getTaskCards = (tasks) => {
       taskCard.render();
       boardTasksContainer.replaceChild(taskCard.element, taskCardEdit.element);
       taskCardEdit.unrender();
+      updatedData.date = updatedCard.dueDate.date;
     };
 
     taskCardEdit.onDelete = () => {
@@ -94,5 +102,5 @@ filterContainer.addEventListener(`change`, (evt) => {
   const filteredTasks = filterTasks(taskCards, filterName);
   getTaskCards(filteredTasks);
 
-  //getTaskCards(taskCards);
+  // getTaskCards(taskCards);
 });

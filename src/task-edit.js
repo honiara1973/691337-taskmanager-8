@@ -1,4 +1,5 @@
 import Component from './component';
+import * as moment from 'moment';
 import flatpickr from 'flatpickr';
 
 class TaskEdit extends Component {
@@ -112,6 +113,8 @@ class TaskEdit extends Component {
       this._onSubmit(newData);
     }
     this.update(newData);
+    console.log(this._dueDate.date);
+    console.log(this._dueDate.time);
   }
 
   _onDeleteButtonClick(evt) {
@@ -321,7 +324,7 @@ class TaskEdit extends Component {
       text: (value) => (target.title = value),
       color: (value) => (target.color = value),
       repeat: (value) => (target.repeatingDays[value] = true),
-      date: (value) => (target.dueDate.date = value),
+      date: (value) => (target.dueDate.date = moment(value, `YYYY-MM-DD`).toDate()),
       time: (value) => (target.dueDate.time = value),
 
       [`hashtag-input`]: (value) => {
