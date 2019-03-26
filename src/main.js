@@ -1,4 +1,6 @@
 // import makeFilterElement from './make-filter';
+import Chart from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import * as moment from 'moment';
 
 import getTasks from './task-data';
@@ -6,6 +8,8 @@ import Task from './task';
 import TaskEdit from './task-edit';
 import Filter from './filter';
 import getFilters from './filter-data';
+import Stats from './stats';
+import chartOptions from './chart-opt';
 
 const TASKS_AMOUNT_INITIAL = 7;
 const allFilters = getFilters();
@@ -17,6 +21,8 @@ const updatedData = {
 
 const filterContainer = document.querySelector(`.main__filter`);
 const boardTasksContainer = document.querySelector(`.board__tasks`);
+const statsControl = document.querySelector(`#control__statistic`);
+const statsContainer = document.querySelector(`.statistic`);
 
 const deleteCard = (tasks, i) => {
   tasks.splice(i, 1);
@@ -56,6 +62,45 @@ const renderFilter = (data) => {
 const createFilterElements = () => {
   allFilters.forEach((it) => renderFilter(it));
 };
+
+const renderStats = (data) => {
+
+  const stats = new Stats(data);
+  statsContainer.appendChild(stats.render());
+
+  const tagsCtx = document.querySelector(`.statistic__tags`);
+  const colorsCtx = document.querySelector(`.statistic__colors`);
+
+  const tagsChart = new Chart(tagsCtx, {
+    plugins: [ChartDataLabels],
+    type: `pie`,
+    data: {
+      labels: [`#watchstreams`, `#relaxation`, `#coding`, `#sleep`, `#watermelonpies`],
+      datasets: [{
+        data: [20, 15, 10, 5, 2],
+        backgroundColor: [`#ff3cb9`, `#ffe125`, `#0c5cdd`, `#000000`, `#31b55c`]
+      }]
+    },
+    options: chartOptions,
+  });
+
+  const colorsChart = new Chart(colorsCtx, {
+    plugins: [ChartDataLabels],
+    type: `pie`,
+    data: {
+      labels: [`#pink`, `#yellow`, `#blue`, `#black`, `#green`],
+      datasets: [{
+        data: [5, 25, 15, 10, 30],
+        backgroundColor: [`#ff3cb9`, `#ffe125`, `#0c5cdd`, `#000000`, `#31b55c`]
+      }]
+    },
+    options: chartOptions,
+  });
+
+  tagsCtx.innerHTML = tagsChart;
+  colorsCtx.innerHTML = colorsChart;
+};
+
 
 const getTaskCards = (tasks) => {
 
@@ -104,3 +149,12 @@ filterContainer.addEventListener(`change`, (evt) => {
 
   // getTaskCards(taskCards);
 });
+
+statsControl.addEventListener(`change`, () => {
+
+  statsContainer.classList.remove(`visually-hidden`);
+  boardTasksContainer.classList.add(`visually-hidden`);
+  renderStats();
+
+});
+
