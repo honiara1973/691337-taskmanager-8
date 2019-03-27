@@ -1,12 +1,20 @@
 import Component from './component';
+import flatpickr from 'flatpickr';
 
 class Stats extends Component {
   constructor() {
     super();
   }
 
+  _onInputPeriod(evt) {
+    const element = evt.target;
+    flatpickr(element, {mode: `range`, altInput: true,
+      altFormat: `j M`, dateFormat: `Y-m-d`, locale: {rangeSeparator: ` - `}});
+  }
+
   get template() {
     return `
+    <div>
         <div class="statistic__line">
           <div class="statistic__period">
             <h2 class="statistic__period-title">Task Activity DIAGRAM</h2>
@@ -37,7 +45,13 @@ class Stats extends Component {
             <canvas class="statistic__colors" width="400" height="300"></canvas>
           </div>
         </div>
+        </div>
         `.trim();
+  }
+
+  createListeners() {
+    this._element.querySelector(`.statistic__period-input`)
+    .addEventListener(`click`, this._onInputPeriod);
   }
 }
 

@@ -22,6 +22,7 @@ const updatedData = {
 const filterContainer = document.querySelector(`.main__filter`);
 const boardTasksContainer = document.querySelector(`.board__tasks`);
 const statsControl = document.querySelector(`#control__statistic`);
+const taskControl = document.querySelector(`#control__task`);
 const statsContainer = document.querySelector(`.statistic`);
 
 const deleteCard = (tasks, i) => {
@@ -68,6 +69,8 @@ const renderStats = (data) => {
   const stats = new Stats(data);
   statsContainer.appendChild(stats.render());
 
+  document.querySelector(`.statistic__tags-wrap`).classList.remove(`visually-hidden`);
+  document.querySelector(`.statistic__colors-wrap`).classList.remove(`visually-hidden`);
   const tagsCtx = document.querySelector(`.statistic__tags`);
   const colorsCtx = document.querySelector(`.statistic__colors`);
 
@@ -81,7 +84,7 @@ const renderStats = (data) => {
         backgroundColor: [`#ff3cb9`, `#ffe125`, `#0c5cdd`, `#000000`, `#31b55c`]
       }]
     },
-    options: chartOptions,
+    options: chartOptions(`TAGS`),
   });
 
   const colorsChart = new Chart(colorsCtx, {
@@ -94,7 +97,7 @@ const renderStats = (data) => {
         backgroundColor: [`#ff3cb9`, `#ffe125`, `#0c5cdd`, `#000000`, `#31b55c`]
       }]
     },
-    options: chartOptions,
+    options: chartOptions(`COLORS`),
   });
 
   tagsCtx.innerHTML = tagsChart;
@@ -155,6 +158,12 @@ statsControl.addEventListener(`change`, () => {
   statsContainer.classList.remove(`visually-hidden`);
   boardTasksContainer.classList.add(`visually-hidden`);
   renderStats();
+
+});
+
+taskControl.addEventListener(`change`, () => {
+  boardTasksContainer.classList.remove(`visually-hidden`);
+  statsContainer.classList.add(`visually-hidden`);
 
 });
 

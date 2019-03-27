@@ -113,8 +113,6 @@ class TaskEdit extends Component {
       this._onSubmit(newData);
     }
     this.update(newData);
-    console.log(this._dueDate.date);
-    console.log(this._dueDate.time);
   }
 
   _onDeleteButtonClick(evt) {
