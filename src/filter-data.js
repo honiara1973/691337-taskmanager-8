@@ -18,7 +18,7 @@ const getFilters = () => {
 
     filters.push(filter);
   }
-console.log(filters);
+
   return filters;
 };
 

@@ -19,6 +19,19 @@ const updatedData = {
   date: ``,
 };
 
+/*
+const statsCounters = {
+  color: {
+    black: 0,
+    yellow: 0,
+    blue: 0,
+    green: 0,
+    pink: 0,
+  }
+};
+*/
+
+
 const filterContainer = document.querySelector(`.main__filter`);
 const boardTasksContainer = document.querySelector(`.board__tasks`);
 const statsControl = document.querySelector(`#control__statistic`);
@@ -65,6 +78,17 @@ const createFilterElements = () => {
 };
 
 const renderStats = (data) => {
+
+  // const statsLabels = Object.keys(statsCounters.color);
+  // console.log(Object.keys(statsCounters.color));
+
+  // const countColor = (element) => {
+  // console.log(taskCards);
+  // return taskCards.reduce((acc, it) => it.color === element ? acc + 1 : acc, 0);
+  // };
+  // console.log(countColor(`black`));
+
+  // console.log(Object.keys(statsCounters.color).forEach((it) => countColor(it)));
 
   const stats = new Stats(data);
   statsContainer.appendChild(stats.render());
@@ -153,15 +177,19 @@ filterContainer.addEventListener(`change`, (evt) => {
   // getTaskCards(taskCards);
 });
 
-statsControl.addEventListener(`change`, () => {
+statsControl.addEventListener(`click`, () => {
 
   statsContainer.classList.remove(`visually-hidden`);
   boardTasksContainer.classList.add(`visually-hidden`);
+
+  while (statsContainer.firstChild) {
+    statsContainer.removeChild(statsContainer.firstChild);
+  }
   renderStats();
 
 });
 
-taskControl.addEventListener(`change`, () => {
+taskControl.addEventListener(`click`, () => {
   boardTasksContainer.classList.remove(`visually-hidden`);
   statsContainer.classList.add(`visually-hidden`);
 
