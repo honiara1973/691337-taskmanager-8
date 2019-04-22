@@ -3,6 +3,7 @@ import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import * as moment from 'moment';
 
+import API from './api';
 import getTasks from './task-data';
 import Task from './task';
 import TaskEdit from './task-edit';
@@ -14,10 +15,15 @@ import chartOptions from './chart-opt';
 const TASKS_AMOUNT_INITIAL = 7;
 const allFilters = getFilters();
 const taskCards = getTasks(TASKS_AMOUNT_INITIAL);
+const AUTHORIZATION = `Basic dXNlckBwYXNzd29yZAo=${Math.random()}`;
+const END_POINT = `https://es8-demo-srv.appspot.com/task-manager`;
+
+const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
 
 const updatedData = {
   date: ``,
 };
+let allTasks;
 
 /*
 const statsCounters = {
@@ -161,7 +167,14 @@ const getTaskCards = (tasks) => {
 };
 
 createFilterElements();
-getTaskCards(taskCards);
+//getTaskCards(taskCards);
+
+api.getTasks()
+.then((it) => {
+  allTasks = it;
+  console.log(allTasks);
+  getTaskCards(allTasks);
+});
 
 
 filterContainer.addEventListener(`change`, (evt) => {
