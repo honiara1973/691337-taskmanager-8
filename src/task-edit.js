@@ -2,13 +2,15 @@ import Component from './component';
 import * as moment from 'moment';
 import flatpickr from 'flatpickr';
 
+const Colors = [`black`, `yellow`, `blue`, `green`, `pink`];
+
 class TaskEdit extends Component {
   constructor(data) {
     super();
     this._title = data.title;
     this._dueDate = data.dueDate;
     this._tags = data.tags;
-    this._colors = data.colors;
+    // this._colors = data.colors;
     this._color = data.color;
     this._picture = data.picture;
     this._repeatingDays = data.repeatingDays;
@@ -72,14 +74,14 @@ class TaskEdit extends Component {
   _onChangeDate() {
     this._state.isDate = !this._state.isDate;
     this.removeListeners();
-    this._partialUpdate();
+    this._partialUpdate(`date`);
     this.createListeners();
   }
 
   _onChangeRepeated() {
     this._state.isRepeated = !this._state.isRepeated;
     this.removeListeners();
-    this._partialUpdate();
+    this._partialUpdate(`repeat`);
     this.createListeners();
   }
 
@@ -98,10 +100,6 @@ class TaskEdit extends Component {
     const element = evt.target;
     flatpickr(element, {enableTime: true, noCalendar: true, altInput: true,
       altFormat: `h:i K`, dateFormat: `Y-m-d h:i`});
-  }
-
-  _partialUpdate() {
-    this._element.innerHTML = this.template;
   }
 
   _onSubmitButtonClick(evt) {
@@ -128,6 +126,44 @@ class TaskEdit extends Component {
 
   set onDelete(fn) {
     this._onDelete = fn;
+  }
+
+  _getCardDatesTemplate() {
+    return `
+      <label class="card__input-deadline-wrap">
+      <input
+      class="card__date"
+      type="text"
+      placeholder="23 September"
+      name="date"
+      value=""></label>
+      <label class="card__input-deadline-wrap">
+      <input class="card__time"
+      type="text"
+      placeholder="11:15 PM"
+      name="time"
+      value="">
+      </label>
+      `;
+  }
+
+  _getCardRepeatTemplate() {
+    return `
+    <div class="card__repeat-days-inner">
+    ${Object.entries(this._repeatingDays)
+      .map(([key, value]) =>
+        `<input
+      class="visually-hidden card__repeat-day-input"
+      type="checkbox"
+      id="repeat-${key}-5"
+      name="repeat"
+      value="${key}"
+      ${value ? `checked` : ``}>
+      <label class="card__repeat-day" for="repeat-${key}-5">${key}</label>
+      `)
+    .join(``)}
+    </div>
+  `;
   }
 
   get template() {
@@ -158,49 +194,25 @@ class TaskEdit extends Component {
       </label></div>
       <div class="card__settings">
       <div class="card__details">
+
       <div class="card__dates">
       <button class="card__date-deadline-toggle" type="button">
       date: <span class="card__date-status">${this._state.isDate ? `yes` : `no`}</span>
       </button>
       <fieldset class="card__date-deadline" ${!this._state.isDate ? `disabled` : ``}>
-      <label class="card__input-deadline-wrap">
-      <input
-      class="card__date"
-      type="text"
-      placeholder="23 September"
-      name="date"
-      value=""></label>
-      <label class="card__input-deadline-wrap">
-      <input class="card__time"
-      type="text"
-      placeholder="11:15 PM"
-      name="time"
-      value="">
-      </label></fieldset>
-
+      ${this._getCardDatesTemplate()}
+      </fieldset>
+      
       <button class="card__repeat-toggle" type="button">
       repeat:<span class="card__repeat-status">
       ${this._state.isRepeated ? `yes` : `no`}
       </span></button>
 
       <fieldset class="card__repeat-days" ${!this._state.isRepeated ? `disabled` : ``}>
-      <div class="card__repeat-days-inner">
-      ${Object.entries(this._repeatingDays)
-        .map(([key, value]) =>
-          `<input
-        class="visually-hidden card__repeat-day-input"
-        type="checkbox"
-        id="repeat-${key}-5"
-        name="repeat"
-        value="${key}"
-        ${value ? `checked` : ``}>
-        <label class="card__repeat-day" for="repeat-${key}-5">${key}</label>
-        `)
-      .join(``)}
-      </div>
+      ${this._getCardRepeatTemplate()}
       </fieldset>
-
       </div>
+
       <div class="card__hashtag">
       <div class="card__hashtag-list">
       ${[...this._tags]
@@ -243,7 +255,7 @@ class TaskEdit extends Component {
       <h3 class="card__colors-title">Color</h3>
       <div class="card__colors-wrap">
 
-      ${this._colors
+      ${Colors
       .map((it) =>
         `<input
       type="radio"
@@ -269,6 +281,33 @@ class TaskEdit extends Component {
       </form>
       </article>
       `.trim();
+  }
+
+  _partialUpdate(data) {
+
+    if (data === `date`) {
+      const element = this._element.querySelector(`.card__date-deadline`);
+      this._element.querySelector(`.card__date-status`)
+      .innerHTML = this._state.isDate ? `yes` : `no`;
+      element.innerHTML = this._getCardDatesTemplate();
+      element.disabled = !this._state.isDate ? true : false;
+    }
+
+    if (data === `repeat`) {
+      const element = this._element.querySelector(`.card__repeat-days`);
+      this._element.querySelector(`.card__repeat-status`)
+      .innerHTML = this._state.isRepeated ? `yes` : `no`;
+      element.innerHTML = this._getCardRepeatTemplate();
+      element.disabled = !this._state.isRepeated ? true : false;
+    }
+  }
+
+  update(data) {
+    this._title = data.title;
+    this._color = data.color;
+    this._repeatingDays = data.repeatingDays;
+    this._tags = data.tags;
+    this._dueDate = data.dueDate;
   }
 
   createListeners() {
@@ -307,14 +346,6 @@ class TaskEdit extends Component {
     .removeEventListener(`click`, this._onInputDate);
     this._element.querySelector(`.card__time`)
     .removeEventListener(`click`, this._onInputTime);
-  }
-
-  update(data) {
-    this._title = data.title;
-    this._color = data.color;
-    this._repeatingDays = data.repeatingDays;
-    this._tags = data.tags;
-    this._dueDate = data.dueDate;
   }
 
   static createMapper(target) {
