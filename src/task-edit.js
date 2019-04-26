@@ -31,10 +31,7 @@ class TaskEdit extends Component {
   _processForm(formData) {
     const entry = {
       title: ``,
-      dueDate: {
-        date: new Date(),
-        time: new Date(),
-      },
+      dueDate: new Date(),
       color: ``,
       tags: this._tags,
       repeatingDays: {
@@ -89,6 +86,7 @@ class TaskEdit extends Component {
     this._title = evt.target.value;
   }
 
+
   _onInputDate(evt) {
     const element = evt.target;
     flatpickr(element, {altInput: true,
@@ -99,8 +97,9 @@ class TaskEdit extends Component {
   _onInputTime(evt) {
     const element = evt.target;
     flatpickr(element, {enableTime: true, noCalendar: true, altInput: true,
-      altFormat: `h:i K`, dateFormat: `Y-m-d h:i`});
+      altFormat: `h:i K`, dateFormat: `h:i`});
   }
+
 
   _onSubmitButtonClick(evt) {
     evt.preventDefault();
@@ -109,6 +108,7 @@ class TaskEdit extends Component {
     const newData = this._processForm(formData);
     if (typeof this._onSubmit === `function`) {
       this._onSubmit(newData);
+      console.log(newData.dueDate);
     }
     this.update(newData);
   }
@@ -323,6 +323,13 @@ class TaskEdit extends Component {
     .addEventListener(`click`, this._onChangeRepeated);
     this._element.querySelector(`.card__text`)
     .addEventListener(`change`, this._onChangeText);
+
+    /*
+    flatpickr(`.card__date`, {altInput: true, altFormat: `j F`, dateFormat: `Y-m-d`});
+    flatpickr(`.card__time`, {enableTime: true, noCalendar: true, altInput: true,
+      altFormat: `h:i K`, dateFormat: `h:i`});
+    */
+
     this._element.querySelector(`.card__date`)
     .addEventListener(`click`, this._onInputDate);
     this._element.querySelector(`.card__time`)
@@ -353,8 +360,10 @@ class TaskEdit extends Component {
       text: (value) => (target.title = value),
       color: (value) => (target.color = value),
       repeat: (value) => (target.repeatingDays[value] = true),
-      date: (value) => (target.dueDate.date = moment(value, `YYYY-MM-DD`).toDate()),
-      time: (value) => (target.dueDate.time = value),
+      date: (value) => (target.dueDate = value),
+      time: (value) => (target.dueDate = `${target.dueDate} ${value}`),
+      // date: (value) => (target.dueDate.date = moment(value, `YYYY-MM-DD`).toDate()),
+      // time: (value) => (target.dueDate.time = value),
 
       [`hashtag-input`]: (value) => {
         if (value.length > 0) {
