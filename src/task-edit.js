@@ -91,13 +91,14 @@ class TaskEdit extends Component {
     const element = evt.target;
     flatpickr(element, {altInput: true,
       altFormat: `j F`,
-      dateFormat: `Y-m-d`});
+      dateFormat: `j F`});
+    // dateFormat: `Y-m-d`});
   }
 
   _onInputTime(evt) {
     const element = evt.target;
-    flatpickr(element, {enableTime: true, noCalendar: true, altInput: true,
-      altFormat: `h:i K`, dateFormat: `h:i`});
+    flatpickr(element, {'time_24hr': true, 'enableTime': true, 'noCalendar': true, 'altInput': true,
+      'altFormat': `H:i`, 'dateFormat': `H:i`});
   }
 
 
@@ -202,7 +203,7 @@ class TaskEdit extends Component {
       <fieldset class="card__date-deadline" ${!this._state.isDate ? `disabled` : ``}>
       ${this._getCardDatesTemplate()}
       </fieldset>
-      
+
       <button class="card__repeat-toggle" type="button">
       repeat:<span class="card__repeat-status">
       ${this._state.isRepeated ? `yes` : `no`}
@@ -323,13 +324,6 @@ class TaskEdit extends Component {
     .addEventListener(`click`, this._onChangeRepeated);
     this._element.querySelector(`.card__text`)
     .addEventListener(`change`, this._onChangeText);
-
-    /*
-    flatpickr(`.card__date`, {altInput: true, altFormat: `j F`, dateFormat: `Y-m-d`});
-    flatpickr(`.card__time`, {enableTime: true, noCalendar: true, altInput: true,
-      altFormat: `h:i K`, dateFormat: `h:i`});
-    */
-
     this._element.querySelector(`.card__date`)
     .addEventListener(`click`, this._onInputDate);
     this._element.querySelector(`.card__time`)
@@ -360,8 +354,17 @@ class TaskEdit extends Component {
       text: (value) => (target.title = value),
       color: (value) => (target.color = value),
       repeat: (value) => (target.repeatingDays[value] = true),
-      date: (value) => (target.dueDate = value),
-      time: (value) => (target.dueDate = `${target.dueDate} ${value}`),
+      date: (value) => (target.dueDate = moment(value, [`DD MMMM`])),
+      time: (value) => (target.dueDate = moment(target.dueDate)
+      .add(moment(value, `k:m`).format(`k`), `hour`)
+      .add(moment(value, `k:m`).format(`m`), `minute`)),
+
+      //date: (value) => (target.dueDate = moment(value, [`DD MMMM`])),
+      //time: (value) => moment(target.dueDate [value]),
+      //.add(moment(value, `k:m`).format(`k`), `hour`)
+      //.add(moment(value, `k:m`).format(`m`), `minute`),
+      // date: (value) => (target.dueDate = value),
+      // time: (value) => (target.dueDate = `${target.dueDate} ${value}`),
       // date: (value) => (target.dueDate.date = moment(value, `YYYY-MM-DD`).toDate()),
       // time: (value) => (target.dueDate.time = value),
 

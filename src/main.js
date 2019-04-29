@@ -57,16 +57,16 @@ const updateCard = (tasks, i, newCard) => {
 const filterTasks = (tasks, filterName) => {
   switch (filterName) {
     case `filter__all`:
-      return taskCards;
+      return tasks;
     case `filter__overdue`:
-      return taskCards.filter((it) => it.dueDate.date < Date.now());
+      return tasks.filter((it) => it.dueDate < Date.now());
     case `filter__today`:
-      return taskCards.filter((it) =>
-        moment(it.dueDate.date).format(`DD MMMM`) === (moment().format(`DD MMMM`)));
+      return tasks.filter((it) =>
+        moment(it.dueDate).format(`DD MMMM`) === moment().format(`DD MMMM`));
     case `filter__favorites`:
-      return taskCards.filter((it) => it.color === `pink`);
+      return tasks.filter((it) => it.color === `pink`);
     case `filter__repeating`:
-      return taskCards.filter((it) =>
+      return tasks.filter((it) =>
         Object.values(it.repeatingDays).some((el) => el === true));
     default:
       return [];
@@ -167,7 +167,7 @@ const getTaskCards = (tasks) => {
 };
 
 createFilterElements();
-//getTaskCards(taskCards);
+// getTaskCards(taskCards);
 
 api.getTasks()
 .then((it) => {
@@ -179,12 +179,14 @@ api.getTasks()
 
 filterContainer.addEventListener(`change`, (evt) => {
   const filterName = evt.target.id;
+  console.log(filterName);
 
   while (boardTasksContainer.firstChild) {
     boardTasksContainer.removeChild(boardTasksContainer.firstChild);
   }
 
-  const filteredTasks = filterTasks(taskCards, filterName);
+  const filteredTasks = filterTasks(allTasks, filterName);
+  console.log(filteredTasks);
   getTaskCards(filteredTasks);
 
   // getTaskCards(taskCards);
