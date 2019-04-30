@@ -1,5 +1,7 @@
-import Component from './component';
+import * as moment from 'moment';
 import flatpickr from 'flatpickr';
+
+import Component from './component';
 
 class Stats extends Component {
   constructor() {
@@ -9,7 +11,7 @@ class Stats extends Component {
   _onInputPeriod(evt) {
     const element = evt.target;
     flatpickr(element, {mode: `range`, altInput: true,
-      altFormat: `j M`, dateFormat: `Y-m-d`, locale: {rangeSeparator: ` - `}});
+      altFormat: `j M`, dateFormat: `j M`, locale: {rangeSeparator: ` - `}});
   }
 
   get template() {
@@ -24,6 +26,9 @@ class Stats extends Component {
                 class="statistic__period-input"
                 type="text"
                 placeholder="01 Feb - 08 Feb"
+                value="${moment().startOf(`week`)
+                .format(`D MMM`)} - ${moment().endOf(`week`)
+                .format(`D MMM`)}"
               />
             </div>
 

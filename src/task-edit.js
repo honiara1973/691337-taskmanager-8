@@ -101,7 +101,6 @@ class TaskEdit extends Component {
       'altFormat': `H:i`, 'dateFormat': `H:i`});
   }
 
-
   _onSubmitButtonClick(evt) {
     evt.preventDefault();
 
