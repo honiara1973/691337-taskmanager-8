@@ -1,6 +1,3 @@
-// import makeFilterElement from './make-filter';
-import Chart from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
 import * as moment from 'moment';
 
 import API from './api';
@@ -9,8 +6,7 @@ import Task from './task';
 import TaskEdit from './task-edit';
 import Filter from './filter';
 import getFilters from './filter-data';
-import Stats from './stats';
-import chartOptions from './chart-opt';
+import renderStats from './stats-controller';
 
 // const TASKS_AMOUNT_INITIAL = 7;
 const allFilters = getFilters();
@@ -24,18 +20,6 @@ const updatedData = {
   date: ``,
 };
 let allTasks;
-
-const statsCounters = {
-  color: {
-    pink: 0,
-    yellow: 0,
-    blue: 0,
-    black: 0,
-    green: 0,
-  },
-
-  hashTags: ``,
-};
 
 const filterContainer = document.querySelector(`.main__filter`);
 const boardTasksContainer = document.querySelector(`.board__tasks`);
@@ -52,8 +36,6 @@ const updateCard = (tasks, i, newCard) => {
   tasks[i] = Object.assign({}, tasks[i], newCard);
   return tasks[i];
 };
-
-
 
 const filterTasks = (tasks, filterName) => {
   switch (filterName) {
@@ -72,7 +54,6 @@ const filterTasks = (tasks, filterName) => {
     default:
       return [];
   }
-
 };
 
 const renderFilter = (data) => {
@@ -83,76 +64,6 @@ const renderFilter = (data) => {
 const createFilterElements = () => {
   allFilters.forEach((it) => renderFilter(it));
 };
-
-const renderStats = (data) => {
-
-  const countColor = (element) => {
-    statsCounters.color[element] =
-    allTasks.reduce((acc, it) => it.color === element ? acc + 1 : acc, 0);
-    return statsCounters.color[element];
-  };
-
-  Object.keys(statsCounters.color).forEach((it) => countColor(it));
-  // console.log(statsCounters.color);
-
-  const getHashTagsArray = (cards) => {
-    let hashTagsArray = [];
-
-    hashTagsArray = cards.reduce((acc, it) => [...acc].concat([...it.tags]), hashTagsArray);
-    //const hashTagsSet = new Set(hashTagsArray);
-
-    const count = (currentEl) => hashTagsArray.reduce((acc, it) => it === currentEl ?
-      acc + 1 : acc, 0);
-    const hashTagsMap = new Map();
-    hashTagsArray.forEach((it) => hashTagsMap.set(it, count(it)));
-
-    return hashTagsMap;
-
-  };
-
-  statsCounters.hashTags = getHashTagsArray(allTasks);
-
-  console.log(getHashTagsArray(allTasks));
-  console.log(statsCounters.hashTags);
-
-  const stats = new Stats(data);
-  statsContainer.appendChild(stats.render());
-
-  document.querySelector(`.statistic__tags-wrap`).classList.remove(`visually-hidden`);
-  document.querySelector(`.statistic__colors-wrap`).classList.remove(`visually-hidden`);
-  const tagsCtx = document.querySelector(`.statistic__tags`);
-  const colorsCtx = document.querySelector(`.statistic__colors`);
-
-  const tagsChart = new Chart(tagsCtx, {
-    plugins: [ChartDataLabels],
-    type: `pie`,
-    data: {
-      labels: [...statsCounters.hashTags.keys()],
-      datasets: [{
-        data: [...statsCounters.hashTags.values()],
-        backgroundColor: [`#ff3cb9`, `#ffe125`, `#0c5cdd`, `#000000`, `#31b55c`]
-      }]
-    },
-    options: chartOptions(`TAGS`),
-  });
-
-  const colorsChart = new Chart(colorsCtx, {
-    plugins: [ChartDataLabels],
-    type: `pie`,
-    data: {
-      labels: [...Object.keys(statsCounters.color)],
-      datasets: [{
-        data: [...Object.values(statsCounters.color)],
-        backgroundColor: [`#ff3cb9`, `#ffe125`, `#0c5cdd`, `#000000`, `#31b55c`]
-      }]
-    },
-    options: chartOptions(`COLORS`),
-  });
-
-  tagsCtx.innerHTML = tagsChart;
-  colorsCtx.innerHTML = colorsChart;
-};
-
 
 const getTaskCards = (tasks) => {
 
@@ -219,7 +130,7 @@ statsControl.addEventListener(`click`, () => {
   while (statsContainer.firstChild) {
     statsContainer.removeChild(statsContainer.firstChild);
   }
-  renderStats();
+  renderStats(allTasks);
 
 });
 
