@@ -6,12 +6,24 @@ import Component from './component';
 class Stats extends Component {
   constructor() {
     super();
+    this._onPeriod = null;
+    this._onPeriodChange = this._onPeriodChange.bind(this);
   }
 
   _onInputPeriod(evt) {
     const element = evt.target;
     flatpickr(element, {mode: `range`, altInput: true,
       altFormat: `j M`, dateFormat: `j M`, locale: {rangeSeparator: ` - `}});
+  }
+
+  _onPeriodChange() {
+    if (typeof this._onPeriod === `function`) {
+      this._onPeriod();
+    }
+  }
+
+  set onPeriod(fn) {
+    this._onPeriod = fn;
   }
 
   get template() {
@@ -57,6 +69,8 @@ class Stats extends Component {
   createListeners() {
     this._element.querySelector(`.statistic__period-input`)
     .addEventListener(`click`, this._onInputPeriod);
+    this._element.querySelector(`.statistic__period-input`)
+    .addEventListener(`change`, this._onPeriodChange);
   }
 }
 

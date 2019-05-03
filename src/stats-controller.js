@@ -31,22 +31,17 @@ const statsCounters = {
   hashTags: ``,
 };
 */
-const getLabelsColor = (arr) => {
-  // const labels = map.keys();
-
-  console.log(statsCounters.colorToRGB);
+const getLabelsColor = (labels) => {
+  //console.log(statsCounters.colorToRGB);
 
   const changeColorToRgb = (color) => {
     return Object.entries(statsCounters.colorToRGB)
     .reduce((acc, [key, value]) => key === color ? value : acc, ``);
   };
 
-  const labelColors = arr.map((it) => changeColorToRgb(it));
+  const labelColors = labels.map((it) => changeColorToRgb(it));
   return labelColors;
 };
-
-// console.log(getLabelsColor([...statsCounters.colors.keys()]));
-
 
 const getStatsCounters = (array) => {
 /*
@@ -57,7 +52,7 @@ const getStatsCounters = (array) => {
   };
   Object.keys(statsCounters.color).forEach((it) => countColor(it));
 */
-
+/*
   const getColorsMap = (cards) => {
     const allColors = cards.reduce((acc, it) => [...acc].concat(it.color), []);
     const count = (currentEl) => allColors.reduce((acc, it) => it === currentEl ?
@@ -70,25 +65,7 @@ const getStatsCounters = (array) => {
   };
   statsCounters.colors = getColorsMap(array);
 
-  /*
-  const getLabelsColor = (arr) => {
-    // const labels = map.keys();
-
-    console.log(statsCounters.colorToRGB);
-
-    const changeColorToRgb = (color) => {
-      return Object.entries(statsCounters.colorToRGB)
-      .reduce((acc, [key, value]) => key === color ? value : acc, ``);
-    };
-
-    const labelColors = arr.map((it) => changeColorToRgb(it));
-    return labelColors;
-  };
-
-   console.log(getLabelsColor([...statsCounters.colors.keys()]));
-*/
-
-  const getHashTagsMap = (cards) => {
+ const getHashTagsMap = (cards) => {
     const allHashTags = cards.reduce((acc, it) => [...acc].concat([...it.tags]), []);
     const count = (currentEl) => allHashTags.reduce((acc, it) => it === currentEl ?
       acc + 1 : acc, 0);
@@ -98,11 +75,28 @@ const getStatsCounters = (array) => {
     return hashTagsMap;
   };
   statsCounters.hashTags = getHashTagsMap(array);
+*/
+  
+  const getCounters = (cards, prop) => {
+
+    const allElements = cards.reduce((acc, it) => [...acc]
+    .concat(it[prop] instanceof Set ? [...it[prop]] : it[prop]), []);
+    const count = (currentEl) => allElements.reduce((acc, it) => it === currentEl ?
+      acc + 1 : acc, 0);
+    const tagsMap = new Map();
+    allElements.forEach((it) => tagsMap.set(it, count(it)));
+
+    return tagsMap;
+  };
+
+  statsCounters.colors = getCounters(array, `color`);
+  statsCounters.hashTags = getCounters(array, `tags`);
+
 };
 
-const updateChartData = (chart) => {
-  chart.data.labels = [...statsCounters].hashTags.keys();
-  chart.data.datasets[0].data = [...statsCounters].hashTags.values();
+const updateChartData = (chart, prop) => {
+  chart.data.labels = [...statsCounters[prop].keys()];
+  chart.data.datasets[0].data = [...statsCounters[prop].values()];
   chart.update();
 };
 
@@ -117,6 +111,12 @@ const renderStats = (data) => {
   document.querySelector(`.statistic__colors-wrap`).classList.remove(`visually-hidden`);
   const tagsCtx = document.querySelector(`.statistic__tags`);
   const colorsCtx = document.querySelector(`.statistic__colors`);
+
+  stats.onPeriod = () => {
+    getStatsCounters(data.filter((it) => it.dueDate > Date.now()));
+    updateChartData(tagsChart, `hashTags`);
+    updateChartData(colorsChart, `colors`);
+  };
 
   const tagsChart = new Chart(tagsCtx, {
     plugins: [ChartDataLabels],

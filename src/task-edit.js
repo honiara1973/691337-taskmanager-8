@@ -108,7 +108,6 @@ class TaskEdit extends Component {
     const newData = this._processForm(formData);
     if (typeof this._onSubmit === `function`) {
       this._onSubmit(newData);
-      console.log(newData.dueDate);
     }
     this.update(newData);
   }
@@ -134,15 +133,18 @@ class TaskEdit extends Component {
       <input
       class="card__date"
       type="text"
-      placeholder="23 September"
+      placeholder="SELECT DATE"
       name="date"
-      value=""></label>
+      value="${moment(this._dueDate).isValid() ?
+    `${moment(this._dueDate).format(`DD MMMM`)}` : ``}">
+        </label>
       <label class="card__input-deadline-wrap">
       <input class="card__time"
       type="text"
-      placeholder="11:15 PM"
+      placeholder="SELECT TIME"
       name="time"
-      value="">
+      value="${moment(this._dueDate).isValid() ?
+    `${moment(this._dueDate).format(`k:mm`)}` : ``}">
       </label>
       `;
   }
@@ -358,10 +360,10 @@ class TaskEdit extends Component {
       .add(moment(value, `k:m`).format(`k`), `hour`)
       .add(moment(value, `k:m`).format(`m`), `minute`)),
 
-      //date: (value) => (target.dueDate = moment(value, [`DD MMMM`])),
-      //time: (value) => moment(target.dueDate [value]),
-      //.add(moment(value, `k:m`).format(`k`), `hour`)
-      //.add(moment(value, `k:m`).format(`m`), `minute`),
+      // date: (value) => (target.dueDate = moment(value, [`DD MMMM`])),
+      // time: (value) => moment(target.dueDate [value]),
+      // .add(moment(value, `k:m`).format(`k`), `hour`)
+      // .add(moment(value, `k:m`).format(`m`), `minute`),
       // date: (value) => (target.dueDate = value),
       // time: (value) => (target.dueDate = `${target.dueDate} ${value}`),
       // date: (value) => (target.dueDate.date = moment(value, `YYYY-MM-DD`).toDate()),
