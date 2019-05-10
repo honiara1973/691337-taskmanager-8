@@ -16,9 +16,11 @@ const END_POINT = `https://es8-demo-srv.appspot.com/task-manager`;
 
 const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
 
+/*
 const updatedData = {
   date: ``,
 };
+*/
 let allTasks;
 
 const filterContainer = document.querySelector(`.main__filter`);
@@ -32,10 +34,12 @@ const deleteCard = (tasks, i) => {
   return tasks;
 };
 
+/*
 const updateCard = (tasks, i, newCard) => {
   tasks[i] = Object.assign({}, tasks[i], newCard);
   return tasks[i];
 };
+*/
 
 const filterTasks = (tasks, filterName) => {
   switch (filterName) {
@@ -79,12 +83,28 @@ const getTaskCards = (tasks) => {
     };
 
     taskCardEdit.onSubmit = (newObject) => {
-      const updatedCard = updateCard(tasks, i, newObject);
-      taskCard.update(updatedCard);
-      taskCard.render();
-      boardTasksContainer.replaceChild(taskCard.element, taskCardEdit.element);
-      taskCardEdit.unrender();
-      updatedData.date = updatedCard.dueDate.date;
+      data.title = newObject.title;
+      data.dueDate = newObject.dueDate;
+      data.color = newObject.color;
+      data.tags = newObject.tags;
+      data.repeatingDays = newObject.repeatingDays;
+
+      // const updatedCard = updateCard(tasks, i, newObject);
+    
+      // console.log(typeof updatedCard);
+      // console.log(typeof data);
+      // console.log(updatedCard.id);
+      // console.log(data);
+      // console.log(updatedCard);
+      api.updateTask({id: data.id, data: data.toRAW()})
+      .then((newData) => {
+        // const updatedCard = updateCard(tasks, i, newObject);
+        taskCard.update(newData);
+        taskCard.render();
+        boardTasksContainer.replaceChild(taskCard.element, taskCardEdit.element);
+        taskCardEdit.unrender();
+        // updatedData.date = updatedCard.dueDate.date;
+      });
     };
 
     taskCardEdit.onDelete = () => {
