@@ -16,11 +16,18 @@ const END_POINT = `https://es8-demo-srv.appspot.com/task-manager`;
 
 const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
 
-/*
-const updatedData = {
-  date: ``,
+const initTasks = () => {
+  while (boardTasksContainer.firstChild) {
+    boardTasksContainer.removeChild(boardTasksContainer.firstChild);
+  }
+  api.getTasks()
+.then((it) => {
+  allTasks = it;
+  console.log(allTasks);
+  getTaskCards(allTasks);
+});
 };
-*/
+
 let allTasks;
 
 const filterContainer = document.querySelector(`.main__filter`);
@@ -29,12 +36,12 @@ const statsControl = document.querySelector(`#control__statistic`);
 const taskControl = document.querySelector(`#control__task`);
 const statsContainer = document.querySelector(`.statistic`);
 
+/*
 const deleteCard = (tasks, i) => {
   tasks.splice(i, 1);
   return tasks;
 };
 
-/*
 const updateCard = (tasks, i, newCard) => {
   tasks[i] = Object.assign({}, tasks[i], newCard);
   return tasks[i];
@@ -90,12 +97,7 @@ const getTaskCards = (tasks) => {
       data.repeatingDays = newObject.repeatingDays;
 
       // const updatedCard = updateCard(tasks, i, newObject);
-    
-      // console.log(typeof updatedCard);
-      // console.log(typeof data);
-      // console.log(updatedCard.id);
-      // console.log(data);
-      // console.log(updatedCard);
+
       api.updateTask({id: data.id, data: data.toRAW()})
       .then((newData) => {
         // const updatedCard = updateCard(tasks, i, newObject);
@@ -107,9 +109,19 @@ const getTaskCards = (tasks) => {
       });
     };
 
+    /*
     taskCardEdit.onDelete = () => {
       deleteCard(tasks, i);
       taskCardEdit.unrender();
+    };
+    */
+
+    taskCardEdit.onDelete = () => {
+      api.deleteTask({id: data.id})
+      .then(() => {
+        initTasks();
+      });
+
     };
 
     boardTasksContainer.appendChild(taskCard.render());
@@ -118,14 +130,7 @@ const getTaskCards = (tasks) => {
 
 createFilterElements();
 // getTaskCards(taskCards);
-
-api.getTasks()
-.then((it) => {
-  allTasks = it;
-  console.log(allTasks);
-  getTaskCards(allTasks);
-});
-
+initTasks();
 
 filterContainer.addEventListener(`change`, (evt) => {
   const filterName = evt.target.id;
